@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class RobotRadarGUI {
+public class RobotRadarGUI extends Thread {
 
         public static void createGUI(){
             //This is the container for the base interface without the panels yet.

@@ -10,7 +10,13 @@ public class RobotRadarGUI extends Thread {
             j.setSize(900,600);//Sets the size of the container
             j.setLayout(null); //Not using a layout manager as of now.
             j.setVisible(true); //Sets whether or not we can see the GUI.
-
+                
+             //Centers the GUI
+            Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+            int x = (int) ((dimension.getWidth() - j.getWidth()) / 2);
+            int y = (int) ((dimension.getHeight() - j.getHeight()) / 2);
+            j.setLocation(x, y);
+                
             //Buttons for stop and reset
             JButton b1 = new JButton("Halt"); //Halt
             JButton b2 = new JButton("Reset"); //Reset Scan

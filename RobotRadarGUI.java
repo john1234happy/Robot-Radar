@@ -7,16 +7,16 @@ public class RobotRadarGUI extends Thread {
             //This is the container for the base interface without the panels yet.
             JFrame j = new JFrame(); //Set up of the initial container where everything will lay.
             j.setTitle("Robot Radar");//Sets the title of the container
-            j.setSize(900,600);//Sets the size of the container
+            j.setSize(900,800);//Sets the size of the container
             j.setLayout(null); //Not using a layout manager as of now.
             j.setVisible(true); //Sets whether or not we can see the GUI.
-                
-             //Centers the GUI
+
+            //Centers the GUI
             Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
             int x = (int) ((dimension.getWidth() - j.getWidth()) / 2);
             int y = (int) ((dimension.getHeight() - j.getHeight()) / 2);
             j.setLocation(x, y);
-                
+
             //Buttons for stop and reset
             JButton b1 = new JButton("Halt"); //Halt
             JButton b2 = new JButton("Reset"); //Reset Scan
@@ -49,10 +49,33 @@ public class RobotRadarGUI extends Thread {
             slider.setPaintLabels(true);
 
             j.add(slider);
+
+
+        //Text area of commands for robot
+            JLabel label = new JLabel("List of Commands:");
+            label.setBounds(100,380, 200,200);
+            JLabel label1 = new JLabel("Move Forward --> w");
+            label1.setBounds(100,400, 200,200);
+            JLabel label2 = new JLabel("Move Backward --> s");
+            label2.setBounds(100,420, 200,200);
+            JLabel label3 = new JLabel("Move Right --> d");
+            label3.setBounds(100,440, 200,200);
+            JLabel label4 = new JLabel("Move Left --> a");
+            label4.setBounds(100,460, 200,200);
+            JLabel label5 = new JLabel("Turn Head Right --> Right Arrow Key");
+            label5.setBounds(100,480, 300,200);
+            JLabel label6 = new JLabel("Turn Head Left --> Left Arrow Key");
+            label6.setBounds(100,500, 300,200);
+
+            j.add(label);
+            j.add(label1);
+            j.add(label2);
+            j.add(label3);
+            j.add(label4);
+            j.add(label5);
+            j.add(label6);
+
             j.setVisible(true);
-
-
-
         }
 
        public void UpdateInterfaceInformation(Dot DotList[]) {
@@ -64,5 +87,7 @@ public class RobotRadarGUI extends Thread {
         }
 
         }
+
+
 
 

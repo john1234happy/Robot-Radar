@@ -1,9 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-
 public class RobotRadarGUI extends Thread {
 
-        public static void createGUI(){
+ public static void createGUI(){
             //This is the container for the base interface without the panels yet.
             JFrame j = new JFrame(); //Set up of the initial container where everything will lay.
             j.setTitle("Robot Radar");//Sets the title of the container
@@ -20,13 +19,17 @@ public class RobotRadarGUI extends Thread {
             //Buttons for stop and reset
             JButton b1 = new JButton("Halt"); //Halt
             JButton b2 = new JButton("Reset"); //Reset Scan
+            JButton b3 = new JButton("Connect"); //Connect to server
 
             b1.setBounds(500,500,80,20);//Coordinates and size of the reset button.
             b2.setBounds(700,500, 80, 20);
+            b3.setBounds(600,600,90,20);
 
             j.add(b1);
             j.add(b2);
+            j.add(b3);
             j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Exit on close
+
             //Paneling part
             JPanel p1 = new JPanel(); // Radar Panel
             JPanel p2 = new JPanel();// Camera Panel
@@ -82,12 +85,9 @@ public class RobotRadarGUI extends Thread {
 
        }
 
-        public static void main(String[] args){
-            createGUI();
-        }
 
-        }
-
-
-
+    @Override
+    public void run() {
+        super.run();
+    }}
 

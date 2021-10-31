@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class RobotManager extends Thread
 {
@@ -19,22 +20,6 @@ public class RobotManager extends Thread
     @Override
     public void run() //this will be the main thread for handling recive command
     {
-        // Scanner scanner = new Scanner(System.in);
-        // String command  = "";
-
-        // while(true)
-        // {
-        //     System.out.print("Send command: ");
-        //     command = scanner.nextLine();
-            
-        //     client.SendToServer(command);
-
-        //     if(command.compareTo("EXIT") == 0)
-        //         break;
-        // }
-        
-        // scanner.close();
-
         String command;
         stopThread = false;
 
@@ -50,7 +35,7 @@ public class RobotManager extends Thread
                     if(command != null)
                         System.out.println("recive: " + command);
                     
-                    if(command.compareTo("disconnect") == 0)
+                    if(command.compareTo("disconnect") == 0 || command.compareTo("EXIT") == 0)
                     {
                         stopThread = true;
                     }
@@ -66,41 +51,74 @@ public class RobotManager extends Thread
 
     public static void main(String[] args) //main don't do anything at the moment due to missing file
     {
-        //RobotManager robotManager = new RobotManager();
+        RobotManager robotManager = new RobotManager();
 
         //create UI
         //...
 
+        bashTest(robotManager);
+    }
 
-        //---------------------------------raw test-------------------------------
-        // try
-        // {
-        //     robotManager.connect("192.168.1.15");
-        //     robotManager.start();
+    /**
+     * this function is just for testing purpose
+     * @param robotManager the robot manager it self 
+     */
+    private static void bashTest(RobotManager robotManager)
+    {
+        robotManager.tryConnect("192.168.1.15");
 
-        //     while(true)
-        //     {
-        //         if(robotManager.isConnected())
-        //         {
-        //             command = robotManager.handleRecivePackage();
-        //             if(command != null)
-        //                 System.out.println("recive: " + command);
-                    
-        //             if(command.compareTo("EXIT") == 0)
-        //                 return;
-        //         }
-        //     }
-        // }
-        // catch(Exception ex)
-        // {
-        //     ex.printStackTrace();
-        // }
+        Scanner scanner = new Scanner(System.in);
+        String command  = "";
 
-        // String command = "rotate(39)";
-        // String argument = command.substring(command.indexOf("(") + 1, command.indexOf(")"));
-        // command = command.substring(0, command.indexOf("("));
+        while(robotManager.isConnected())
+        {
+            System.out.print("Send command: ");
+            command = scanner.nextLine();
+            String argument = "";
+            boolean send = true;
+            if(command.indexOf("(") > 0)
+            {
+                argument = command.substring(command.indexOf("(")).trim();
+                command = command.substring(0, command.indexOf("("));
+            }
+            
+            switch(command.toUpperCase())
+            {
+                case "W":
+                    command = "moveForward";
+                    break;
+                case "S":
+                    command = "moveBackward";
+                    break;
+                case "A":
+                    command = "rotateLeft";
+                    break;
+                case "D":
+                    command = "rotateRight";
+                    break;
+                case "H":
+                    command = "Halt";
+                    break;
+                case "T":
+                    command = "turnHead" + argument;
+                    break;
+                case "STOPSERVER":
+                    command = "stopServer";
+                    break;
+                default:
+                    send = false;
+                    break;
+            }
 
-        // System.out.println(String.format("{\"command\":\"%s\",\"angle\":%s}", "turnHead", "59"));
+            if(send)
+                robotManager.trySendCommand(command);
+            
+            if(command.compareTo("EXIT") == 0)
+                break;
+            
+        }
+        
+        scanner.close();
     }
 
     /**
@@ -252,7 +270,7 @@ public class RobotManager extends Thread
     
     //---------------------------------------------------------------------------------------------
 
-    class TCPClient 
+    private class TCPClient 
     {
         //String name="";
         String host = "localhost";

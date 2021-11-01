@@ -7,25 +7,27 @@ import java.util.Scanner;
 
 public class RobotManager extends Thread
 {
-    TCPClient client;
-    CommandInterpreter CI;
-    boolean stopThread;
+    private TCPClient client;
+    private CommandInterpreter CI;
+    private boolean stopThread;
+    private Timer timer;
 
     public RobotManager()
     {
+        stopThread = false;
         CI = new CommandInterpreter();
         client = new TCPClient();
+        timer = new Timer();
     }
     
     @Override
     public void run() //this will be the main thread for handling recive command
     {
         String command;
-        stopThread = false;
 
         try
         {
-            while(!stopThread)
+            while(!Thread.interrupted())
             {
                 if(isConnected())
                 {
@@ -33,13 +35,14 @@ public class RobotManager extends Thread
                     
                     //for testing 
                     if(command != null)
-                        System.out.println("recive: " + command);
-                    
-                    if(command.compareTo("disconnect") == 0 || command.compareTo("EXIT") == 0)
-                    {
-                        stopThread = true;
-                    }
+                        System.out.println("Raw data recive: " + command);
+
+                    if(command.compareTo("EXIT") == 0)
+                        break;
                 }
+
+                if(stopThread)
+                    break;
             }
         }
         catch(Exception ex)
@@ -70,7 +73,7 @@ public class RobotManager extends Thread
         Scanner scanner = new Scanner(System.in);
         String command  = "";
 
-        while(robotManager.isConnected())
+        while(true)
         {
             System.out.print("Send command: ");
             command = scanner.nextLine();
@@ -105,6 +108,8 @@ public class RobotManager extends Thread
                 case "STOPSERVER":
                     command = "stopServer";
                     break;
+                case "STOPTHREAD":
+                    robotManager.tryStopHandleRecivePackageThread();
                 default:
                     send = false;
                     break;
@@ -114,7 +119,12 @@ public class RobotManager extends Thread
                 robotManager.trySendCommand(command);
             
             if(command.compareTo("EXIT") == 0)
+            {
+                robotManager.tryStopHandleRecivePackageThread();
+                robotManager.tryDisconnect();
+
                 break;
+            }
             
         }
         
@@ -174,7 +184,6 @@ public class RobotManager extends Thread
      */
     public void disconnect() throws Exception
     {
-        this.stopThread = true;
         client.close();
     }
 
@@ -218,15 +227,21 @@ public class RobotManager extends Thread
     }
 
     /**
-     * this function will interpreting keypress into command and send it to server
-     * @param evt keystoke event
+     * this function will stop current thread that handle recive package
      */
-    public void sendCommand(java.awt.event.KeyEvent evt)
+    public boolean tryStopHandleRecivePackageThread()
     {
-        //send evt key to CI to interpreting into json package
-        String jsonPackage = CI.InterpretingCommand(evt);
-        //call sendcommand function to send it to client
-        trySendCommand(jsonPackage);
+        this.stopThread = true;
+        try 
+        {
+            this.interrupt();
+            return true;
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -238,9 +253,28 @@ public class RobotManager extends Thread
     {
         //interpreting command to jsonpackage
         String jsonPackage = CI.InterpretingCommand(command);
+        double timerSecond = 0f;
 
-        //send jsonPackge to dataInterpreter
-        //... TPA
+        if(CI.isMovementCommand())
+        {
+            if(CI.stageCommand.compareTo("Halt") == 0)
+            {
+                timerSecond = timer.stopTimer();
+                timer = new Timer();
+
+                //for now just print it out
+                System.out.println(timerSecond);
+
+                //send jsonPackge to Data Interpreter
+                //... TPA
+
+            }
+            else
+            {
+                if(!timer.isAlive())
+                    timer.startTimer();
+            }
+        }
 
         //send jsonpackage to server
         client.SendToServer(jsonPackage);
@@ -265,7 +299,17 @@ public class RobotManager extends Thread
         }
     }
 
-    
+        /**
+     * this function will interpreting keypress into command and send it to server
+     * @param evt keystoke event
+     */
+    public void sendCommand(java.awt.event.KeyEvent evt)
+    {
+        //send evt key to CI to interpreting into json package
+        String jsonPackage = CI.InterpretingCommand(evt);
+        //call sendcommand function to send it to client
+        trySendCommand(jsonPackage);
+    }
 
     
     //---------------------------------------------------------------------------------------------
@@ -279,12 +323,6 @@ public class RobotManager extends Thread
 
         private PrintWriter outToServer;
         private BufferedReader inFromServer;
-    
-        TCPClient(String _host, int _port)
-        {
-            host = _host;
-            port = _port;
-        }
 
         TCPClient()
         {
@@ -343,6 +381,66 @@ public class RobotManager extends Thread
             }
             else
                 throw new Exception("Server is not connected");
+        }
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    private class Timer extends Thread
+    {
+        private double second = 0f;
+        private boolean stopTimer;
+
+        public Timer()
+        {
+            super.setDaemon(true);
+        }
+
+        @Override
+        public void run()
+        {
+            while(!this.isInterrupted())
+            {
+                try
+                {
+                    Thread.sleep(100);
+                    second += 0.1;
+                }
+                catch (Exception e) 
+                {
+                    e.printStackTrace();
+                }
+
+                if(stopTimer)
+                    break;
+            }
+        }
+
+        /**
+         * this function will start the timer
+         */
+        public void startTimer()
+        {
+            this.second = 0;
+            stopTimer = false;
+            super.start();
+        }
+
+        /**
+         * this function will stop the timer
+         */
+        public double stopTimer()
+        {
+            stopTimer = true;
+            try 
+            {
+                super.join();
+            } 
+            catch (InterruptedException e) 
+            {
+                e.printStackTrace();
+            }
+
+            return second;
         }
     }
 }

@@ -1,8 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
-public class RobotRadarGUI extends Thread {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
- public static void createGUI(){
+
+public class RobotRadarGUI extends Thread implements ActionListener {
+
+        public void createGUI(){
             //This is the container for the base interface without the panels yet.
             JFrame j = new JFrame(); //Set up of the initial container where everything will lay.
             j.setTitle("Robot Radar");//Sets the title of the container
@@ -24,6 +28,11 @@ public class RobotRadarGUI extends Thread {
             b1.setBounds(500,500,80,20);//Coordinates and size of the reset button.
             b2.setBounds(700,500, 80, 20);
             b3.setBounds(600,600,90,20);
+
+            //Action Listening
+            b1.addActionListener(this);
+            b2.addActionListener(this);
+            b3.addActionListener(this);
 
             j.add(b1);
             j.add(b2);
@@ -80,6 +89,10 @@ public class RobotRadarGUI extends Thread {
 
             j.setVisible(true);
         }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
 
        public void UpdateInterfaceInformation(Dot DotList[]) {
 
@@ -89,5 +102,13 @@ public class RobotRadarGUI extends Thread {
     @Override
     public void run() {
         super.run();
-    }}
+    }
+    //Testing purposes
+public static void main(String[] args){
+           RobotRadarGUI r = new RobotRadarGUI();
+            r.createGUI();
+}
+
+}
+
 

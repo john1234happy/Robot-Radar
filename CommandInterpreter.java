@@ -2,6 +2,8 @@ import java.awt.event.KeyEvent;
 
 public class CommandInterpreter 
 {
+    public String stageCommand = "";
+
     /**
      * this function will interpreting Keyevent into command and json package
      * @param evt Keyevent
@@ -57,8 +59,27 @@ public class CommandInterpreter
         else
             jsonPackage = String.format("{\"command\":\"%s\"}", command);
 
+            
+        this.stageCommand = command;
         return jsonPackage;
     }
 
-    
+    /**
+     * this function will check if the current stage command is a movement command
+     * @return true is stage command is a movement command else false
+     */
+    public boolean isMovementCommand()
+    {
+        switch(stageCommand)
+        {
+            case "moveForward":
+            case "moveBackward":
+            case "rotateLeft":
+            case "rotateRight":
+            case "Halt":
+                return true;
+            default:
+                return false;
+        }
+    }
 }

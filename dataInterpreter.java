@@ -53,7 +53,7 @@ class dataInterpreter {
     public static void printList(LinkedList<Dot> ll) {
         for (int i = 0; i < ll.size(); i++) {
             Dot d = ll.get(i);
-            System.out.println("Dot " + i + " -- x: " + Math.round(d.getx()) + ", y: " + Math.round(d.gety()));
+            System.out.println("Dot " + i + " -- x: " + d.getx() + ", y: " + d.gety());
         }
         System.out.println();
     }

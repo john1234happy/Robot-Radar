@@ -13,5 +13,6 @@ classes overview:
   Robot data interpreter: handle incoming and outcoming data
   Robot command interpreter: handle packing command
   UserInterface: main GUI for the User
+  Dot: basic structure of a data point to be stored 
 </pre>
 <hr>

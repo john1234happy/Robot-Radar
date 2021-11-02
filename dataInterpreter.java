@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 
 class dataInterpreter {
     private static LinkedList<Dot> DotList = new LinkedList<Dot>();
-    // this will be a ref to the linked list somewhere else later, but I'm making it here for now
 
     public static void main(String[] args) {
         parseJSON("{\"Dot\":{\"distance\":78.45,\"angle\":26.56}}");
@@ -18,20 +17,18 @@ class dataInterpreter {
 
         // TODO: right now it works assuming a distance is passed, but will have to calculate distance travelled using time in future
 
-        String stripped = s.replaceAll("\\s+",""); // remove whitespace
-
         Pattern pattern = Pattern.compile("[0-9|.]+"); // regex for any number
-        Matcher matcher = pattern.matcher(stripped);
+        Matcher matcher = pattern.matcher(s);
 
-        if (stripped.contains("Dot")) {
+        if (s.contains("Dot")) {
 
             matcher.find(); // we are just taking the first two numbers we find
 
-            double dist = Double.parseDouble(stripped.substring(matcher.start(), matcher.end()));
+            double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
 
             matcher.find();
 
-            double angle = Double.parseDouble(stripped.substring(matcher.start(), matcher.end()));
+            double angle = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
 
             double x = dist*Math.sin(angle);
             double y = dist*Math.cos(Math.toRadians(angle));
@@ -39,14 +36,14 @@ class dataInterpreter {
             addDot(new Dot(x, y));
         }
 
-        else if (stripped.contains("movement")) {
+        else if (s.contains("move")) {
             matcher.find();
-            updateListMovement(Double.parseDouble(stripped.substring(matcher.start(), matcher.end())));
+            updateListMovement(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
-        else if (stripped.contains("angle")) {
+        else if (s.contains("angle")) {
             matcher.find();
-            updateListAngle(Double.parseDouble(stripped.substring(matcher.start(), matcher.end())));
+            updateListAngle(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
     }
 
@@ -83,17 +80,6 @@ class dataInterpreter {
         DotList.add(d);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

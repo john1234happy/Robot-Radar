@@ -4,18 +4,15 @@ import java.util.regex.Matcher;
 
 
 class dataInterpreter {
-    private static LinkedList<Dot> DotList = new LinkedList<Dot>();
+    private LinkedList<Dot> dotList = new LinkedList<Dot>();
 
-    public static void main(String[] args) {
-        parseJSON("{\"Dot\":{\"distance\":78.45,\"angle\":26.56}}");
-        printList(DotList);
-    }
+    private final double robotMoveSpeed = 1; // mm per second 
+    private final double robotTurnSpeed = 1; // degrees per second 
 
-    public static void parseJSON(String s) {
+    public void parseJSON(String s) {
         // parse JSON - either a new dot, or a previous movement or turn
-        // {"Dot":{"distance":78.45,"angle":26.56}}
-
-        // TODO: right now it works assuming a distance is passed, but will have to calculate distance travelled using time in future
+        // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
+        // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement
 
         Pattern pattern = Pattern.compile("[0-9|.]+"); // regex for any number
         Matcher matcher = pattern.matcher(s);
@@ -36,50 +33,71 @@ class dataInterpreter {
             addDot(new Dot(x, y));
         }
 
-        else if (s.contains("move")) {
+        else if (s.contains("moveForward")) {
             matcher.find();
-            updateListMovement(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListMovement(robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
-        else if (s.contains("angle")) {
+        else if (s.contains("moveBackward")) {
             matcher.find();
-            updateListAngle(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListMovement(-robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
+
+        else if (s.contains("rotateRight")) {
+            matcher.find();
+            updateListAngle(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
+
+        else if (s.contains("rotateLeft")) {
+            matcher.find();
+            updateListAngle(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
     }
 
-    private static void updateListMovement(double dist) { 
+    private void updateListMovement(double dist) { 
         // update list with (forward or backward) distance moved 
-        for (Dot d : DotList) {
+        for (Dot d : dotList) {
             d.update(d.getx(), d.gety() - dist);
             }      
     }
 
-    private static void updateListAngle(double angle) { 
+    private void updateListAngle(double angle) { 
         // update list with angle turned in degrees
-        for (Dot d : DotList) {
+        for (Dot d : dotList) {
             d.update(d.getx() * Math.cos(Math.toRadians(angle)) + d.gety() * Math.sin(Math.toRadians(angle)), 
                 -d.getx() * Math.sin(Math.toRadians(angle)) + d.gety() * Math.cos(Math.toRadians(angle)));
             }      
     }
 
-    private static void printList(LinkedList<Dot> ll) { // prints dot list 
-        for (int i = 0; i < ll.size(); i++) {
-            Dot d = ll.get(i);
+    public void printList() { // prints dot list 
+        for (int i = 0; i < dotList.size(); i++) {
+            Dot d = dotList.get(i);
             System.out.println("Dot " + i + " -- x: " + d.getx() + ", y: " + d.gety());
         }
         System.out.println();
     }
 
-    public static LinkedList<Dot> getList() {
+    public LinkedList<Dot> getList() {
         // returns dot list 
-        return DotList;
+        return dotList;
     }
 
-    private static void addDot(Dot d) { 
+    private void addDot(Dot d) { 
         // adds dot to dot list 
-        DotList.add(d);
+        dotList.add(d);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

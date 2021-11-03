@@ -10,25 +10,23 @@ class dataInterpreter {
     private final double robotTurnSpeed = 1; // degrees per second 
 
     public void parseJSON(String s) {
-        // parse JSON - either a new dot, or a previous movement or turn
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
-        // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement
+        // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement.
+        // the string must contain no more than one keyword 
 
-        Pattern pattern = Pattern.compile("[0-9|.]+"); // regex for any number
+        Pattern pattern = Pattern.compile("[0-9.]+"); // regex for any number
         Matcher matcher = pattern.matcher(s);
 
         if (s.contains("Dot")) {
-
+            
             matcher.find(); // we are just taking the first two numbers we find
-
             double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
 
             matcher.find();
-
-            double angle = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
+            double angle = Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
 
             double x = dist*Math.sin(angle);
-            double y = dist*Math.cos(Math.toRadians(angle));
+            double y = dist*Math.cos(angle);
 
             addDot(new Dot(x, y));
         }
@@ -62,10 +60,10 @@ class dataInterpreter {
     }
 
     private void updateListAngle(double angle) { 
-        // update list with angle turned in degrees
+        // update list with angle turned in radians
         for (Dot d : dotList) {
-            d.update(d.getx() * Math.cos(Math.toRadians(angle)) + d.gety() * Math.sin(Math.toRadians(angle)), 
-                -d.getx() * Math.sin(Math.toRadians(angle)) + d.gety() * Math.cos(Math.toRadians(angle)));
+            d.update(d.getx() * Math.cos(angle) + d.gety() * Math.sin(angle), 
+                -d.getx() * Math.sin(angle) + d.gety() * Math.cos(angle));
             }      
     }
 
@@ -87,6 +85,5 @@ class dataInterpreter {
         dotList.add(d);
     }
 }
-
 
 

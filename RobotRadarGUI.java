@@ -2,11 +2,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 
-public class RobotRadarGUI extends Thread implements ActionListener {
+public class RobotRadarGUI extends Thread implements Runnable, ActionListener, KeyListener {
 
-        public void createGUI(){
+
+
+    public void createGUI(RobotManager r) throws Exception {
             //This is the container for the base interface without the panels yet.
             JFrame j = new JFrame(); //Set up of the initial container where everything will lay.
             j.setTitle("Robot Radar");//Sets the title of the container
@@ -24,19 +31,23 @@ public class RobotRadarGUI extends Thread implements ActionListener {
             JButton b1 = new JButton("Halt"); //Halt
             JButton b2 = new JButton("Reset"); //Reset Scan
             JButton b3 = new JButton("Connect"); //Connect to server
+            JButton b4 = new JButton("Scan");
 
-            b1.setBounds(500,500,80,20);//Coordinates and size of the reset button.
-            b2.setBounds(700,500, 80, 20);
+            b1.setBounds(500,500,80,20);
+            b2.setBounds(700,500, 80, 20);//Coordinates and size of the reset button.
             b3.setBounds(600,600,90,20);
+            b4.setBounds(600,500, 80,20);
 
             //Action Listening
             b1.addActionListener(this);
             b2.addActionListener(this);
             b3.addActionListener(this);
+            b4.addActionListener(this);
 
             j.add(b1);
             j.add(b2);
             j.add(b3);
+            j.add(b4);
             j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Exit on close
 
             //Paneling part
@@ -88,27 +99,71 @@ public class RobotRadarGUI extends Thread implements ActionListener {
             j.add(label6);
 
             j.setVisible(true);
+
+
+
+
         }
+    private final Set<Integer> pressedKeys = new HashSet<>(); //For storing what keys were pressed
+
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent actionEvent) {
 
     }
 
-       public void UpdateInterfaceInformation(Dot DotList[]) {
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+        //Not used
+    }
 
-       }
+    @Override
+    public synchronized void keyPressed(KeyEvent keyEvent) { //This is supposed to check if buttons are being pressed at the same time but I'm not sure if it's correct.
+        pressedKeys.add(keyEvent.getKeyCode());
+        Point o = new Point();
+        if(!pressedKeys.isEmpty()){
+            for(Iterator<Integer> i = pressedKeys.iterator(); i.hasNext();){
+                switch(i.next()){
+                    case KeyEvent.VK_ALT:
+                    case KeyEvent.VK_W:
+                    case KeyEvent.VK_D:
+                    case KeyEvent.VK_A:
+                    case KeyEvent.VK_S:
+                        o.y = -1;
+                        break;
+
+                }
+            }
+        }
+
+
+    }
+
+    @Override
+    public synchronized void keyReleased(KeyEvent keyEvent) {
+            pressedKeys.remove(keyEvent.getKeyCode());
+    }
+
+    public void UpdateInterfaceInformation(Dot DotList[]) {
+
+    }
 
 
     @Override
     public void run() {
-        super.run();
+        RobotManager r = new RobotManager();
+        try {
+            createGUI(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
-    //Testing purposes
+
+
+
+
+//Testing
 public static void main(String[] args){
-           RobotRadarGUI r = new RobotRadarGUI();
-            r.createGUI();
-}
-
-}
-
+    new Thread(new RobotRadarGUI()).start();
+}}
 

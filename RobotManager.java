@@ -100,10 +100,13 @@ public class RobotManager extends Thread
                     command = "rotateRight";
                     break;
                 case "H":
-                    command = "Halt";
+                    command = "halt";
                     break;
                 case "T":
                     command = "turnHead" + argument;
+                    break;
+                case "SCAN":
+                    command = "scan";
                     break;
                 case "STOPSERVER":
                     command = "stopServer";
@@ -257,13 +260,13 @@ public class RobotManager extends Thread
 
         if(CI.isMovementCommand())
         {
-            if(CI.stageCommand.compareTo("Halt") == 0)
+            if(CI.stageCommand.compareTo("halt") == 0)
             {
                 timerSecond = timer.stopTimer();
                 timer = new Timer();
 
                 //for now just print it out
-                System.out.println(timerSecond);
+                System.out.println("Timer stop at: " + timerSecond);
 
                 //send jsonPackge to Data Interpreter
                 //... TPA
@@ -272,7 +275,10 @@ public class RobotManager extends Thread
             else
             {
                 if(!timer.isAlive())
+                {
+                    System.out.println("Timer start");
                     timer.startTimer();
+                }
             }
         }
 

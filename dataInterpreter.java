@@ -1,85 +1,101 @@
-import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
-public class CommandInterpreter 
-{
-    public String stageCommand = "";
 
-    /**
-     * this function will interpreting Keyevent into command and json package
-     * @param evt Keyevent
-     * @return json package of evt press
-     */
-    public String InterpretingCommand(java.awt.event.KeyEvent evt)
-    {
-        String command = "";
+class dataInterpreter {
+    private LinkedList<Dot> dotList = new LinkedList<Dot>();
 
-        switch(evt.getKeyCode())
-        {
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_UP:
-                command = "moveForward";
-                break;
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_DOWN:
-                command = "moveBackward";
-                break;
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_LEFT:
-                command = "rotateLeft";
-                break;
-            case KeyEvent.VK_D:
-            case KeyEvent.VK_RIGHT:
-                command = "rotateRight";
-                break;
-            case KeyEvent.VK_ALT:
-                command = "halt";
-                break;
-            default:
-                break;
-        }
+    private final double robotMoveSpeed = 1; // mm per second 
+    private final double robotTurnSpeed = 1; // degrees per second 
 
-        return InterpretingCommand(command);
-    }
+    public void parseJSON(String s) {
+        // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
+        // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement.
+        // the string must contain no more than one keyword 
 
-    /**
-     * this function will interpreting command into json package
-     * @param command command to be interpreting
-     * @return jsonPackage
-     */
-    public String InterpretingCommand(String command)
-    {
-        String jsonPackage;
+        Pattern pattern = Pattern.compile("[0-9.]+"); // regex for any number
+        Matcher matcher = pattern.matcher(s);
 
-        if(command.indexOf("(") > 0)
-        {
-            String argument = command.substring(command.indexOf("(") + 1, command.indexOf(")"));
-            command = command.substring(0, command.indexOf("("));
-            jsonPackage = String.format("{\"command\":\"%s\",\"angle\":%s}", command, argument);
-        }
-        else
-            jsonPackage = String.format("{\"command\":\"%s\"}", command);
-
+        if (s.contains("Dot")) {
             
-        this.stageCommand = command;
-        return jsonPackage;
+            matcher.find(); // we are just taking the first two numbers we find
+            double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
+
+            matcher.find();
+            double angle = Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+
+            double x = dist*Math.sin(angle);
+            double y = dist*Math.cos(angle);
+
+            addDot(new Dot(x, y));
+        }
+
+        else if (s.contains("moveForward")) {
+            matcher.find();
+            updateListMovement(robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
+
+        else if (s.contains("moveBackward")) {
+            matcher.find();
+            updateListMovement(-robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
+
+        else if (s.contains("rotateRight")) {
+            matcher.find();
+            updateListAngle(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
+
+        else if (s.contains("rotateLeft")) {
+            matcher.find();
+            updateListAngle(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+        }
     }
 
-    /**
-     * this function will check if the current stage command is a movement command
-     * @return true is stage command is a movement command else false
-     */
-    public boolean isMovementCommand()
-    {
-        switch(stageCommand)
-        {
-            case "moveForward":
-            case "moveBackward":
-            case "rotateLeft":
-            case "rotateRight":
-            case "halt":
-                return true;
-            default:
-                return false;
+    private void updateListMovement(double dist) { 
+        // update list with (forward or backward) distance moved 
+        for (Dot d : dotList) {
+            d.update(d.getx(), d.gety() - dist);
+            }      
+    }
+
+    private void updateListAngle(double angle) { 
+        // update list with angle turned in radians
+        for (Dot d : dotList) {
+            d.update(d.getx() * Math.cos(angle) + d.gety() * Math.sin(angle), 
+                -d.getx() * Math.sin(angle) + d.gety() * Math.cos(angle));
+            }      
+    }
+
+    public void printList() { // prints dot list 
+        for (int i = 0; i < dotList.size(); i++) {
+            Dot d = dotList.get(i);
+            System.out.println("Dot " + i + " -- x: " + d.getx() + ", y: " + d.gety());
         }
+        System.out.println();
+    }
+
+    public LinkedList<Dot> getList() {
+        // returns dot list 
+        return dotList;
+    }
+
+    private void addDot(Dot d) { 
+        // adds dot to dot list 
+        dotList.add(d);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

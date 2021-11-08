@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 
 public class RobotGUI extends javax.swing.JFrame {
     Graphics g;
@@ -88,7 +90,7 @@ public class RobotGUI extends javax.swing.JFrame {
             }
         });
 
-       
+
         jScrollPane1.setViewportView(jTextArea1);
 
         TextArea1.setEditable(false);
@@ -170,6 +172,7 @@ public class RobotGUI extends javax.swing.JFrame {
     private void ResetScanButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
+
     }
 
     private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
@@ -180,9 +183,23 @@ public class RobotGUI extends javax.swing.JFrame {
     }
     private void RadarPanelKeyPressed(java.awt.event.KeyEvent evt) throws Exception {
         RobotManager r = new RobotManager();
-        r.SendCommand("Halt");
+        if(evt.getKeyCode() == KeyEvent.VK_ALT){
+            r.SendCommand("Halt");
+        }
+
+
+        g.drawOval(150,150,100,100); //Just a placeholder until I can figure out the circle
+
+
     }
+
     public void updateInterfaceInfo(Dot DotList[]){
+        dataInterpreter data = new dataInterpreter();
+       LinkedList<Dot> dots = data.getList();
+
+      for(Dot d : dots){
+            //Something to display the dots, not sure how yet
+      }
 
     }
 
@@ -219,6 +236,7 @@ public class RobotGUI extends javax.swing.JFrame {
             public void run() {
                 RobotManager r = new RobotManager();
                 new RobotGUI(r).setVisible(true);
+
             }
         });
     }
@@ -237,4 +255,3 @@ public class RobotGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration
 }
-

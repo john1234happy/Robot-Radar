@@ -32,7 +32,7 @@ public class CommandInterpreter
                 command = "rotateRight";
                 break;
             case KeyEvent.VK_ALT:
-                command = "Halt";
+                command = "halt";
                 break;
             default:
                 break;
@@ -76,7 +76,7 @@ public class CommandInterpreter
             case "moveBackward":
             case "rotateLeft":
             case "rotateRight":
-            case "Halt":
+            case "halt":
                 return true;
             default:
                 return false;

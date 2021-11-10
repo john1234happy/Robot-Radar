@@ -4,10 +4,12 @@ import java.util.LinkedList;
 
 public class RobotGUI extends javax.swing.JFrame {
     Graphics g;
+    RobotManager rm; 
     /**
      * Creates new form JFrame
      */
     public RobotGUI(RobotManager r) {
+        rm = r; 
         initComponents();
         g = RadarPanel.getGraphics();
 
@@ -165,8 +167,7 @@ public class RobotGUI extends javax.swing.JFrame {
 
     private void StopServerButtonActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
-        RobotManager r = new RobotManager();
-        r.disconnect();
+        rm.disconnect();
     }
 
     private void ResetScanButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,14 +178,12 @@ public class RobotGUI extends javax.swing.JFrame {
 
     private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
-        RobotManager robotManager = new RobotManager();
         String hostIP = IPField.getText();
-        robotManager.connect(hostIP);
+        rm.connect(hostIP);
     }
     private void RadarPanelKeyPressed(java.awt.event.KeyEvent evt) throws Exception {
-        RobotManager r = new RobotManager();
         if(evt.getKeyCode() == KeyEvent.VK_ALT){
-            r.SendCommand("Halt");
+            rm.SendCommand("Halt");
         }
 
 
@@ -193,11 +192,10 @@ public class RobotGUI extends javax.swing.JFrame {
 
     }
 
-    public void updateInterfaceInfo(Dot DotList[]){
-        dataInterpreter data = new dataInterpreter();
-       LinkedList<Dot> dots = data.getList();
+    public void updateInterfaceInfo(LinkedList<Dot> dotList){
+        // something to clear the old dots 
 
-      for(Dot d : dots){
+      for(Dot d : dotList){
             //Something to display the dots, not sure how yet
       }
 
@@ -234,8 +232,7 @@ public class RobotGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                RobotManager r = new RobotManager();
-                new RobotGUI(r).setVisible(true);
+                new RobotGUI(rm).setVisible(true);
 
             }
         });

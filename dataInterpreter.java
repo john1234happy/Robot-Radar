@@ -33,22 +33,22 @@ class dataInterpreter {
 
         else if (s.contains("moveForward")) {
             matcher.find();
-            updateListMovement(robotMoveSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
+            updateListMovement(robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
         else if (s.contains("moveBackward")) {
             matcher.find();
-            updateListMovement(-robotMoveSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
+            updateListMovement(-robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
         else if (s.contains("rotateRight")) {
             matcher.find();
-            updateListAngle(robotTurnSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
+            updateListAngle(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
         else if (s.contains("rotateLeft")) {
             matcher.find();
-            updateListAngle(-robotTurnSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
+            updateListAngle(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
     }
 
@@ -60,7 +60,8 @@ class dataInterpreter {
     }
 
     private void updateListAngle(double angle) { 
-        // update list with angle turned in radians
+        // update list with angle turned in degrees
+        angle = Math.toRadians(angle);
         for (Dot d : dotList) {
             d.update(d.getx() * Math.cos(angle) + d.gety() * Math.sin(angle), 
                 d.gety() * Math.cos(angle) - d.getx() * Math.sin(angle));
@@ -85,6 +86,7 @@ class dataInterpreter {
         dotList.add(d);
     }
 }
+
 
 
 

@@ -21,7 +21,7 @@ class dataInterpreter {
             
             matcher.find(); // we are just taking the first two numbers we find
             double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
-
+            
             matcher.find();
             double angle = Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
 
@@ -33,22 +33,22 @@ class dataInterpreter {
 
         else if (s.contains("moveForward")) {
             matcher.find();
-            updateListMovement(robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListMovement(robotMoveSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
 
         else if (s.contains("moveBackward")) {
             matcher.find();
-            updateListMovement(-robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListMovement(-robotMoveSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
 
         else if (s.contains("rotateRight")) {
             matcher.find();
-            updateListAngle(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListAngle(robotTurnSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
 
         else if (s.contains("rotateLeft")) {
             matcher.find();
-            updateListAngle(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListAngle(-robotTurnSpeed * Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
     }
 
@@ -63,7 +63,7 @@ class dataInterpreter {
         // update list with angle turned in radians
         for (Dot d : dotList) {
             d.update(d.getx() * Math.cos(angle) + d.gety() * Math.sin(angle), 
-                -d.getx() * Math.sin(angle) + d.gety() * Math.cos(angle));
+                d.gety() * Math.cos(angle) - d.getx() * Math.sin(angle));
             }      
     }
 
@@ -85,17 +85,6 @@ class dataInterpreter {
         dotList.add(d);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

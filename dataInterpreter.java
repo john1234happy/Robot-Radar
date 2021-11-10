@@ -14,7 +14,7 @@ class dataInterpreter {
         // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement.
         // the string must contain no more than one keyword 
 
-        Pattern pattern = Pattern.compile("[0-9.]+"); // regex for any number
+        Pattern pattern = Pattern.compile("[0-9.-]+"); // regex for any number
         Matcher matcher = pattern.matcher(s);
 
         if (s.contains("Dot")) {

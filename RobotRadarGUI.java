@@ -224,7 +224,7 @@ public class RobotGUI extends javax.swing.JFrame {
     private void RadarPanelKeyPressed(java.awt.event.KeyEvent evt) throws Exception {
         // TODO add your handling code here:
 
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
+        if (evt.getKeyCode() == KeyEvent.VK_ALT) {
             rm.sendCommand(evt);
         }
     }

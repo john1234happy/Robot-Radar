@@ -9,15 +9,23 @@ public class RobotManager extends Thread
 {
     private TCPClient client;
     private CommandInterpreter CI;
+    private dataInterpreter RDI;
     private boolean stopThread;
     private Timer timer;
+    private RobotGUI GUI;
 
     public RobotManager()
     {
         stopThread = false;
         CI = new CommandInterpreter();
+        RDI = new dataInterpreter();
         client = new TCPClient();
         timer = new Timer();
+    }
+
+    public void pointGUI(RobotGUI GUI)
+    {
+        this.GUI = GUI;
     }
     
     @Override
@@ -55,11 +63,13 @@ public class RobotManager extends Thread
     public static void main(String[] args) //main don't do anything at the moment due to missing file
     {
         RobotManager robotManager = new RobotManager();
+        RobotGUI GUI = new RobotGUI(robotManager);
+        robotManager.pointGUI(GUI);
+        GUI.setVisible(true);
+        System.out.println("Done setup");
 
-        //create UI
-        //...
 
-        bashTest(robotManager);
+        //bashTest(robotManager);
     }
 
     /**
@@ -222,8 +232,10 @@ public class RobotManager extends Thread
         if(jsonPackage != null)
         {
             //send to robot data interpreter
-            
-            
+            RDI.parseJSON(jsonPackage);
+
+            //send that json package to GUI
+            GUI.updateInterfaceInfo(RDI.getList());
         }
 
         return jsonPackage;
@@ -254,13 +266,12 @@ public class RobotManager extends Thread
      */
     public void SendCommand(String command) throws Exception
     {
-        //interpreting command to jsonpackage
-        String jsonPackage = CI.InterpretingCommand(command);
+        String jsonPackage;
         double timerSecond = 0f;
 
-        if(CI.isMovementCommand())
+        if(CI.isMovementCommand(command))
         {
-            if(CI.stageCommand.compareTo("halt") == 0)
+            if(command.compareTo("halt") == 0)
             {
                 timerSecond = timer.stopTimer();
                 timer = new Timer();
@@ -268,8 +279,15 @@ public class RobotManager extends Thread
                 //for now just print it out
                 System.out.println("Timer stop at: " + timerSecond);
 
+                //interpreting command to jsonpackage
+                jsonPackage = CI.InterpretingCommand(CI.stageCommand);
+
                 //send jsonPackge to Data Interpreter
-                //... TPA
+                RDI.parseJSON(jsonPackage);
+
+                //send the list to GUI
+                GUI.updateInterfaceInfo(RDI.getList());
+
 
             }
             else
@@ -279,11 +297,16 @@ public class RobotManager extends Thread
                     System.out.println("Timer start");
                     timer.startTimer();
                 }
+
+                //interpreting command to jsonpackage
+                jsonPackage = CI.InterpretingCommand(command);
+
+                //send jsonpackage to server
+                client.SendToServer(jsonPackage);
             }
         }
 
-        //send jsonpackage to server
-        client.SendToServer(jsonPackage);
+        
     }
 
     /**

@@ -6,11 +6,11 @@ import java.util.regex.Matcher;
 class dataInterpreter {
     private HashMap<Integer, Double> dotList = new HashMap<Integer, Double>();
 
-    // private final double robotMoveSpeed = 1166.66666667; // mm per second 
-    // private final double robotTurnSpeed = 180; // degrees per second 
+    private final double robotMoveSpeed = 1166.66666667; // mm per second 
+    private final double robotTurnSpeed = 180; // degrees per second 
 
-    private final double robotMoveSpeed = 1; // debugging speeds 
-    private final double robotTurnSpeed = 1; 
+    // private final double robotMoveSpeed = 1; // debugging speeds 
+    // private final double robotTurnSpeed = 1; 
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR

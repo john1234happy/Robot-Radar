@@ -220,13 +220,24 @@ public class RobotGUI extends javax.swing.JFrame {
         });
 
     }
-
+    //This may be right? If someone can look it over and just tell me if I'm being dumb or I'm good, that'd be GREAT lol
     private void RadarPanelKeyPressed(java.awt.event.KeyEvent evt) throws Exception {
         // TODO add your handling code here:
-
-        if (evt.getKeyCode() == KeyEvent.VK_ALT) {
+         if (evt.getKeyCode() == KeyEvent.VK_ALT) {
             rm.sendCommand(evt);
         }
+        else if(evt.getKeyCode() == KeyEvent.VK_W || evt.getKeyCode() == KeyEvent.VK_UP){
+            rm.sendCommand(evt);
+        }
+        else if(evt.getKeyCode() == KeyEvent.VK_S || evt.getKeyCode() == KeyEvent.VK_DOWN){
+            rm.sendCommand(evt);
+        }
+        else if(evt.getKeyCode() == KeyEvent.VK_A || evt.getKeyCode() == KeyEvent.VK_LEFT){
+            rm.sendCommand(evt);
+        }
+        else if(evt.getKeyCode() == KeyEvent.VK_D || evt.getKeyCode() == KeyEvent.VK_RIGHT){
+            rm.sendCommand(evt);
+        
     }
 
     private void RadarPanelKeyReleased(java.awt.event.KeyEvent evt) throws Exception {

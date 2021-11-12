@@ -68,9 +68,9 @@ public class CommandInterpreter
      * this function will check if the current stage command is a movement command
      * @return true is stage command is a movement command else false
      */
-    public boolean isMovementCommand()
+    public boolean isMovementCommand(String command)
     {
-        switch(stageCommand)
+        switch(command)
         {
             case "moveForward":
             case "moveBackward":

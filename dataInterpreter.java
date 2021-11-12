@@ -1,13 +1,16 @@
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 
 class dataInterpreter {
-    private LinkedList<Dot> dotList = new LinkedList<Dot>();
+    private HashMap<Integer, Double> dotList = new HashMap<Integer, Double>();
 
-    private final double robotMoveSpeed = 1; // mm per second 
-    private final double robotTurnSpeed = 1; // degrees per second 
+    // private final double robotMoveSpeed = 1166.66666667; // mm per second 
+    // private final double robotTurnSpeed = 180; // degrees per second 
+
+    private final double robotMoveSpeed = 1; // debugging speeds 
+    private final double robotTurnSpeed = 1; 
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
@@ -23,12 +26,9 @@ class dataInterpreter {
             double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
             
             matcher.find();
-            double angle = Math.toRadians(Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
 
-            double x = dist*Math.sin(angle);
-            double y = dist*Math.cos(angle);
-
-            addDot(new Dot(x, y));
+            dotList.put(angle, dist);
         }
 
         else if (s.contains("moveForward")) {
@@ -43,47 +43,57 @@ class dataInterpreter {
 
         else if (s.contains("rotateRight")) {
             matcher.find();
-            updateListAngle(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListAngle((int) (robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
         }
 
         else if (s.contains("rotateLeft")) {
             matcher.find();
-            updateListAngle(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
+            updateListAngle((int) (-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
         }
     }
 
-    private void updateListMovement(double dist) { 
+    private void updateListMovement(double moved) { 
         // update list with (forward or backward) distance moved 
-        for (Dot d : dotList) {
-            d.update(d.getx(), d.gety() - dist);
-            }      
+        HashMap<Integer, Double> temp = new HashMap<Integer, Double>();
+
+        for (int i = 0; i < 360; i++) {
+            if (dotList.get(i) != null) {
+                double x = dotList.get(i) * Math.sin(Math.toRadians(i)); 
+                double y = dotList.get(i) * Math.cos(Math.toRadians(i)) - moved; 
+
+                int newAngle = (int) Math.round((Math.toDegrees(Math.atan2(x, y)) + 360000) % 360);
+                double newDist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); 
+
+                temp.put(newAngle, newDist); 
+            }
+        }      
+        dotList = temp; 
     }
 
-    private void updateListAngle(double angle) { 
+    private void updateListAngle(int angle) { 
         // update list with angle turned in degrees
-        angle = Math.toRadians(angle);
-        for (Dot d : dotList) {
-            d.update(d.getx() * Math.cos(angle) + d.gety() * Math.sin(angle), 
-                d.gety() * Math.cos(angle) - d.getx() * Math.sin(angle));
-            }      
-    }
+        HashMap<Integer, Double> temp = new HashMap<Integer, Double>();
 
-    public void printList() { // prints dot list 
-        for (int i = 0; i < dotList.size(); i++) {
-            Dot d = dotList.get(i);
-            System.out.println("Dot " + i + " -- x: " + d.getx() + ", y: " + d.gety());
+        for (int i = 0; i < 360; i++) {
+            if (dotList.get(i) != null) {
+                temp.put((i - angle + 360) % 360, dotList.get(i)); 
+            }
         }
-        System.out.println();
+        dotList = temp; 
     }
 
-    public LinkedList<Dot> getList() {
+    public void printList() {
+        for (int i = 0; i < 360; i++) {
+            if (dotList.get(i) != null) {
+                System.out.println("angle: " + i + ", dist: " + dotList.get(i));
+            }
+        }
+    }
+
+
+    public HashMap<Integer, Double> getList() {
         // returns dot list 
         return dotList;
-    }
-
-    private void addDot(Dot d) { 
-        // adds dot to dot list 
-        dotList.add(d);
     }
 }
 

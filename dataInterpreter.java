@@ -115,6 +115,7 @@ class dataInterpreter {
 
         for (Dot d : dotList.values()) {
             array[index] = new Dot(d.getx(), d.gety());
+            index++;
         }
         return array; 
     }
@@ -131,6 +132,7 @@ class dataInterpreter {
             x += panelWidth / 2; y += panelHeight / 2; 
 
             array[index] = new Dot(x, y);
+            index++; 
         }
         return array; 
     }

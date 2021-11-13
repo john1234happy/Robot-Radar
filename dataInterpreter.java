@@ -27,14 +27,14 @@ class dataInterpreter {
             matcher.find(); // we are just taking the first two numbers we find
             double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
             
-            if (dist < 1200) {
+            if (dist <= maxScanDist) {
 
                 matcher.find();
-                Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
+                Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5); 
 
                 angle -= 90; // 90 degrees is straight ahead 
-                while (angle < 0) // if angle is negative, make it positive
-                    angle += 360; 
+                while (angle < 360) 
+                    angle += 360; // if negative -> positive 
                 angle %= 360; 
 
                 double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
@@ -100,7 +100,7 @@ class dataInterpreter {
         dotList = temp; 
     }
 
-    public void printList() {
+    public void printList() { // prints list with angle in deg, x in mm, and y in mm 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
                 System.out.println("Angle " + i + " -- x: " + dotList.get(i).getx() + ", y: " + dotList.get(i).gety());
@@ -127,9 +127,9 @@ class dataInterpreter {
 
         for (Dot d : dotList.values()) {
             double x = d.getx(); double y = d.gety(); 
-            x /= maxScanDist; y /= maxScanDist;
-            x *= panelWidth; y *= panelHeight; 
-            x += panelWidth / 2; y += panelHeight / 2; 
+            x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist
+            x *= panelWidth / 2; y *= panelHeight / 2; // scale to size of panel 
+            x += panelWidth / 2; y += panelHeight / 2;  // move to middle of panel 
 
             array[index] = new Dot(x, y);
             index++; 

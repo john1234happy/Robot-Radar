@@ -28,6 +28,11 @@ class dataInterpreter {
             matcher.find();
             Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
 
+            angle -= 90; // 90 degrees is straight ahead 
+            while (angle < 0) // if angle is negative, make it positive
+                angle += 360; 
+            angle %= 360; 
+
             double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
             double y = dist * Math.cos(Math.toRadians(angle)); // transform
 
@@ -63,7 +68,7 @@ class dataInterpreter {
 
             if (dotList.get(i) != null) {
 
-                double x = dotList.get(i).getx();
+                double x = dotList.get(i).getx(); // extract info from dot
                 double y = dotList.get(i).gety() - moved; 
 
                 int newAngle = (int) Math.round((Math.toDegrees(Math.atan2(x, y)) + 360000) % 360); // cartesian coords -> polar
@@ -100,12 +105,12 @@ class dataInterpreter {
 
 
     public Dot[] getList() {
-        // returns array of dots
+        // returns array of dots (w/ +250 to x and y)
         Dot[] array = new Dot[dotList.size()];
         int index = 0;
 
         for (Dot d : dotList.values()) {
-            array[index] = new Dot(d.getx(), d.gety());
+            array[index] = new Dot(d.getx() + 250, d.gety() + 250);
         }
         return array; 
     }

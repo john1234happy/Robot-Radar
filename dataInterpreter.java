@@ -12,6 +12,10 @@ class dataInterpreter {
     // private final double robotMoveSpeed = 1; // debugging speeds 
     // private final double robotTurnSpeed = 1; 
 
+    private final double maxScanDist = 400; // in mm
+    private final double panelHeight = 500; // in px
+    private final double panelWidth = 500;  // in px
+
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
         // keyword "moveForward", "moveBackward", "rotateRight", or "rotateLeft", and a number representing the duration of the movement.
@@ -25,18 +29,21 @@ class dataInterpreter {
             matcher.find(); // we are just taking the first two numbers we find
             double dist = Double.parseDouble(s.substring(matcher.start(), matcher.end()));
             
-            matcher.find();
-            Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
+            if (dist < 1200) {
 
-            angle -= 90; // 90 degrees is straight ahead 
-            while (angle < 0) // if angle is negative, make it positive
-                angle += 360; 
-            angle %= 360; 
+                matcher.find();
+                Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
 
-            double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
-            double y = dist * Math.cos(Math.toRadians(angle)); // transform
+                angle -= 90; // 90 degrees is straight ahead 
+                while (angle < 0) // if angle is negative, make it positive
+                    angle += 360; 
+                angle %= 360; 
 
-            dotList.put(angle, new Dot(x, y));
+                double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
+                double y = dist * Math.cos(Math.toRadians(angle)); // transform
+
+                dotList.put(angle, new Dot(x, y));
+            } 
         }
 
         else if (s.contains("moveForward")) {
@@ -103,14 +110,29 @@ class dataInterpreter {
         }
     }
 
-
     public Dot[] getList() {
-        // returns array of dots (w/ +250 to x and y)
+        // returns array of dots relative to the robot in mm
         Dot[] array = new Dot[dotList.size()];
         int index = 0;
 
         for (Dot d : dotList.values()) {
-            array[index] = new Dot(d.getx() + 250, d.gety() + 250);
+            array[index] = new Dot(d.getx(), d.gety());
+        }
+        return array; 
+    }
+
+    public Dot[] getListScaled() {
+        // returns array of dots relative to the robot in px (scaled to panel with 500p height and width))
+        Dot[] array = new Dot[dotList.size()];
+        int index = 0;
+
+        for (Dot d : dotList.values()) {
+            double x = d.getx(); double y = d.gety(); 
+            x /= maxScanDist; y /= maxScanDist;
+            x *= panelWidth; y *= panelHeight; 
+            x += panelWidth / 2; y += panelHeight / 2; 
+
+            array[index] = new Dot(x, y);
         }
         return array; 
     }

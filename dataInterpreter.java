@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 
 
 class dataInterpreter {
-    private HashMap<Integer, Double> dotList = new HashMap<Integer, Double>();
+    private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     private final double robotMoveSpeed = 1166.66666667; // mm per second 
     private final double robotTurnSpeed = 180; // degrees per second 
@@ -28,11 +28,14 @@ class dataInterpreter {
             matcher.find();
             Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5);
 
-            dotList.put(angle, dist);
+            double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
+            double y = dist * Math.cos(Math.toRadians(angle)); // transform
+
+            dotList.put(angle, new Dot(x, y));
         }
 
         else if (s.contains("moveForward")) {
-            matcher.find();
+            matcher.find(); // just taking the first number we find for all of these
             updateListMovement(robotMoveSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())));
         }
 
@@ -54,17 +57,22 @@ class dataInterpreter {
 
     private void updateListMovement(double moved) { 
         // update list with (forward or backward) distance moved 
-        HashMap<Integer, Double> temp = new HashMap<Integer, Double>();
+        HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {
-            if (dotList.get(i) != null) {
-                double x = dotList.get(i) * Math.sin(Math.toRadians(i)); 
-                double y = dotList.get(i) * Math.cos(Math.toRadians(i)) - moved; 
 
-                int newAngle = (int) Math.round((Math.toDegrees(Math.atan2(x, y)) + 360000) % 360);
+            if (dotList.get(i) != null) {
+
+                double x = dotList.get(i).getx();
+                double y = dotList.get(i).gety() - moved; 
+
+                int newAngle = (int) Math.round((Math.toDegrees(Math.atan2(x, y)) + 360000) % 360); // cartesian coords -> polar
                 double newDist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); 
 
-                temp.put(newAngle, newDist); 
+                double newx = newDist * Math.sin(Math.toRadians(newAngle)); // polar coords -> cartesian 
+                double newy = newDist * Math.cos(Math.toRadians(newAngle)); // transform
+
+                temp.put(newAngle, new Dot(newx, newy)); 
             }
         }      
         dotList = temp; 
@@ -72,11 +80,11 @@ class dataInterpreter {
 
     private void updateListAngle(int angle) { 
         // update list with angle turned in degrees
-        HashMap<Integer, Double> temp = new HashMap<Integer, Double>();
+        HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
-                temp.put((i - angle + 360000) % 360, dotList.get(i)); 
+                temp.put((i - angle + 360) % 360, dotList.get(i)); 
             }
         }
         dotList = temp; 
@@ -85,15 +93,21 @@ class dataInterpreter {
     public void printList() {
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
-                System.out.println("angle: " + i + ", dist: " + dotList.get(i));
+                System.out.println("Angle " + i + " -- x: " + dotList.get(i).getx() + ", y: " + dotList.get(i).gety());
             }
         }
     }
 
 
-    public HashMap<Integer, Double> getList() {
-        // returns dot list 
-        return dotList;
+    public Dot[] getList() {
+        // returns array of dots
+        Dot[] array = new Dot[dotList.size()];
+        int index = 0;
+
+        for (Dot d : dotList.values()) {
+            array[index] = new Dot(d.getx(), d.gety());
+        }
+        return array; 
     }
 }
 

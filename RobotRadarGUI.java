@@ -1,31 +1,25 @@
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.LinkedList;
-
-public class RobotGUI extends javax.swing.JFrame {
-    RobotManager rm;
-    Graphics g;
-
-
-
-    
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JPanel;
+public class RobotGUI extends javax.swing.JFrame 
+{
+    private RobotManager rm;
+    private Radar radar;
+    private int keyCode = -1;
+        
     /**
      * Creates new form JFrame
      */
-    public RobotGUI(RobotManager r )   {
-        initComponents();
-        rm = r;
-
-    }
-    //I hope this is correct...
-    private abstract class Radar extends Graphics{
-        public Radar(javax.swing.JPanel RadarPanel) {
-            super();
-        }
+    public RobotGUI(RobotManager rm) 
+    {
+       initComponents();
+       this.rm = rm;
+       this.radar = new Radar(RadarPanel);
+       this.radar.start();
     }
 
     /**
@@ -40,233 +34,365 @@ public class RobotGUI extends javax.swing.JFrame {
         CameraPanel = new javax.swing.JPanel();
         RadarPanel = new javax.swing.JPanel();
         StopServerButton = new javax.swing.JButton();
-        ResetScanButton = new javax.swing.JButton();
+        clearRadarButton = new javax.swing.JButton();
         ConnectButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         TextArea1 = new javax.swing.JTextArea();
         jSlider1 = new javax.swing.JSlider();
         IPField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        connectedLabel = new javax.swing.JLabel();
+        autoDrawCheckBox = new javax.swing.JCheckBox();
+        radarRotateRateTextField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        xTextField = new javax.swing.JTextField();
+        yTextField = new javax.swing.JTextField();
+        drawDot = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        dotSizeTextField = new javax.swing.JTextField();
+        dotSizeLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         CameraPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 204, 255)));
+        CameraPanel.setPreferredSize(new java.awt.Dimension(600, 400));
 
         javax.swing.GroupLayout CameraPanelLayout = new javax.swing.GroupLayout(CameraPanel);
         CameraPanel.setLayout(CameraPanelLayout);
         CameraPanelLayout.setHorizontalGroup(
-                CameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 230, Short.MAX_VALUE)
+            CameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 588, Short.MAX_VALUE)
         );
         CameraPanelLayout.setVerticalGroup(
-                CameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 195, Short.MAX_VALUE)
+            CameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 402, Short.MAX_VALUE)
         );
 
         RadarPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 0, 0)));
-        RadarPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                try {
-                    RadarPanelKeyPressed(evt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                try {
-                    RadarPanelKeyReleased(evt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        RadarPanel.setPreferredSize(new java.awt.Dimension(500, 500));
 
         javax.swing.GroupLayout RadarPanelLayout = new javax.swing.GroupLayout(RadarPanel);
         RadarPanel.setLayout(RadarPanelLayout);
         RadarPanelLayout.setHorizontalGroup(
-                RadarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 231, Short.MAX_VALUE)
+            RadarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 498, Short.MAX_VALUE)
         );
         RadarPanelLayout.setVerticalGroup(
-                RadarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 0, Short.MAX_VALUE)
+            RadarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 498, Short.MAX_VALUE)
         );
 
+        StopServerButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         StopServerButton.setText("Stop Server");
         StopServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    StopServerButtonActionPerformed(evt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                StopServerButtonActionPerformed(evt);
             }
         });
 
-        ResetScanButton.setText("Reset");
-        ResetScanButton.addActionListener(new java.awt.event.ActionListener() {
+        clearRadarButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        clearRadarButton.setText("Clear Radar");
+        clearRadarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ResetScanButtonActionPerformed(evt);
+                clearRadarButtonActionPerformed(evt);
             }
         });
 
+        ConnectButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         ConnectButton.setText("Connect");
         ConnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    ConnectButtonActionPerformed(evt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                ConnectButtonActionPerformed(evt);
             }
         });
 
         TextArea1.setEditable(false);
         TextArea1.setColumns(20);
+        TextArea1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         TextArea1.setRows(5);
-        TextArea1.setText("w --> Move Forward\na --> Move Left\ns --> Move Backward\nd --> Move Right");
-        jScrollPane2.setViewportView(TextArea1);
-
-        IPField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IPFieldActionPerformed(evt);
+        TextArea1.setText("w or up arrow        --> Move Forward\na or left arrow       --> Move Left\ns or down arrow    --> Move Backward\nd or right arrow     --> Move Right\nClick me to use Keyboard");
+        TextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                TextArea1KeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                TextArea1KeyReleased(evt);
             }
         });
+        jScrollPane2.setViewportView(TextArea1);
+
+        jSlider1.setMaximum(180);
+        jSlider1.setValue(90);
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+
+        IPField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        IPField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        IPField.setText("192.168.1.");
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("Host IP -->");
+
+        connectedLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        connectedLabel.setText("Connected: NO");
+
+        autoDrawCheckBox.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        autoDrawCheckBox.setSelected(true);
+        autoDrawCheckBox.setText("Auto Draw");
+        autoDrawCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoDrawCheckBoxActionPerformed(evt);
+            }
+        });
+
+        radarRotateRateTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        radarRotateRateTextField.setText("20");
+        radarRotateRateTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radarRotateRateTextFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Radar Rotate rate:");
+
+        xTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        xTextField.setText("20");
+
+        yTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        yTextField.setText("20");
+
+        drawDot.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        drawDot.setText("Manual Draw Dot (x and y)");
+        drawDot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawDotActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Dot size:");
+
+        dotSizeTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        dotSizeTextField.setText("20");
+        dotSizeTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dotSizeTextFieldActionPerformed(evt);
+            }
+        });
+
+        dotSizeLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        dotSizeLabel.setText("20");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1))
+                            .addComponent(jScrollPane2)
+                            .addComponent(CameraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(CameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                                .addComponent(IPField, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(ConnectButton))
-                                                        .addComponent(jSlider1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(RadarPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addContainerGap())
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(52, 52, 52)
-                                                .addComponent(StopServerButton)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(ResetScanButton)
-                                                .addGap(44, 44, 44))))
+                                    .addComponent(autoDrawCheckBox)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(radarRotateRateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dotSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dotSizeLabel)))
+                                .addGap(0, 255, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(RadarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(20, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(IPField)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(ConnectButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(connectedLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(StopServerButton)))
+                                .addGap(22, 22, 22))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(clearRadarButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(drawDot)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(CameraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(RadarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(ConnectButton)
-                                        .addComponent(IPField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(StopServerButton)
-                                        .addComponent(ResetScanButton))
-                                .addGap(41, 41, 41))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap(234, Short.MAX_VALUE)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(RadarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(CameraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ConnectButton)
+                            .addComponent(IPField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(connectedLabel)
+                            .addComponent(StopServerButton)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(autoDrawCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(radarRotateRateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(dotSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dotSizeLabel))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(clearRadarButton)
+                    .addComponent(xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(drawDot))
+                .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>                        
 
-    private void IPFieldActionPerformed(ActionEvent evt) {
-            }
-
-    private void StopServerButtonActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+    private void StopServerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // TODO add your handling code here:
-
-        rm.disconnect();
-    }
-    
-//Unsure what needs to be done for the reset button
-    private void ResetScanButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        rm.tryDisconnect();
+        connectedLabel.setText("Connected: NO");
+        rm = new RobotManager();
+        rm.pointGUI(this);
+    }                                                
 
-    }
-
-    private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+    private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
-        String hostIP = IPField.getText();
-        rm.connect(hostIP);
-    }
-    //Still figuring out the slider business
-    private void jSlider1MouseDragged(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        jSlider1.setMaximum(180);
-        jSlider1.setMaximum(0);
-        jSlider1.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-
-                JSlider s = (JSlider) changeEvent.getSource();
-            }
-        });
-
-    }
-    //This may be right? If someone can look it over and just tell me if I'm being dumb or I'm good, that'd be GREAT lol
-    private void RadarPanelKeyPressed(java.awt.event.KeyEvent evt) throws Exception {
-        // TODO add your handling code here:
-         if (evt.getKeyCode() == KeyEvent.VK_ALT) {
-            rm.sendCommand(evt);
-        }
-        else if(evt.getKeyCode() == KeyEvent.VK_W || evt.getKeyCode() == KeyEvent.VK_UP){
-            rm.sendCommand(evt);
-        }
-        else if(evt.getKeyCode() == KeyEvent.VK_S || evt.getKeyCode() == KeyEvent.VK_DOWN){
-            rm.sendCommand(evt);
-        }
-        else if(evt.getKeyCode() == KeyEvent.VK_A || evt.getKeyCode() == KeyEvent.VK_LEFT){
-            rm.sendCommand(evt);
-        }
-        else if(evt.getKeyCode() == KeyEvent.VK_D || evt.getKeyCode() == KeyEvent.VK_RIGHT){
-            rm.sendCommand(evt);
+        String hostIP = IPField.getText().trim();
+        boolean connect = rm.tryConnect(hostIP);
         
-    }
+        if(connect)
+            connectedLabel.setText("Connected: Yes");
+        else
+            connectedLabel.setText("Connected: NO");
+    }                                             
 
-    private void RadarPanelKeyReleased(java.awt.event.KeyEvent evt) throws Exception {
+    private void autoDrawCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // TODO add your handling code here:
-
-            rm.SendCommand("halt");
-
-    }
-//The dot part still needs to be figured out
-    public void updateInterfaceInfo(LinkedList<Dot> dotList){
-
-        // something to add the new dots
-        if (dotList.size() > 100 * 0.2) {
-            for (int i = 0; i < 100 * 0.1; i++) {
-                dotList.remove(i);
-            }
+        if(autoDrawCheckBox.isSelected())
+        {
+            radar.autoDraw = true;
         }
-        // Draws each circle
-        for (Dot d : dotList) {
-             RadarPanel.getGraphics();
-             g.drawOval(240,240,50,50);
-
-
+        else
+        {
+            radar.autoDraw = false;
+            radar.clearAll();
+            radar.drawCenterCircle();
         }
-        dotList.clear();
+    }                                                
 
+    private void radarRotateRateTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                         
+        // TODO add your handling code here:
+        try
+        {
+            int rotateRate = Integer.parseInt(radarRotateRateTextField.getText());
+            radar.spinRate = rotateRate;
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Error: Rotate rate must be interger");
+        }
+        
+    }                                                        
+
+    private void clearRadarButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+        // TODO add your handling code here:
+        radar.autoDraw = false;
+        radar.clearAll();
+        radar.drawCenterCircle();
+    }                                                
+
+    private void TextArea1KeyPressed(java.awt.event.KeyEvent evt) {                                     
+        // TODO add your handling code here:
+        if(keyCode == -1)
+        {
+            rm.sendCommand(evt);
+            keyCode = evt.getKeyCode();
+            //System.out.println("Pressed: " + keyCode);
+        }
+    }                                    
+
+    private void TextArea1KeyReleased(java.awt.event.KeyEvent evt) {                                      
+        // TODO add your handling code here:
+        if(evt.getKeyCode() == keyCode)
+        {
+            rm.trySendCommand("halt");
+            keyCode = -1;
+            //System.out.println("Halting");
+        }
+    }                                     
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {                                      
+        // TODO add your handling code here:
+        rm.trySendCommand(String.format("turnHead(%s)", jSlider1.getValue()));
+        //System.out.println(jSlider1.getValue());
+    }                                     
+
+    private void drawDotActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        // TODO add your handling code here:
+        int x = Integer.parseInt(xTextField.getText().trim());
+        int y = Integer.parseInt(yTextField.getText().trim());
+        radar.drawDot(x, y);
+    }                                       
+
+    private void dotSizeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+        // TODO add your handling code here:
+        int size = Integer.parseInt(dotSizeTextField.getText().trim());
+        radar.dotSize = size;
+        dotSizeLabel.setText(size + "");
+    }                                                
+    
+    public void updateInterfaceInfo(Dot dots[])
+    {
+        radar.dotArray = null;
+        radar.dotArray = dots;
+        
+        if(!autoDrawCheckBox.isSelected())
+        {
+            radar.drawDots();
+        }
     }
-
-
     /**
      * @param args the command line arguments
      */
@@ -274,7 +400,7 @@ public class RobotGUI extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -297,14 +423,8 @@ public class RobotGUI extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
-
-
             public void run() {
-
-                RobotManager r = new RobotManager();
-                new RobotGUI(r).setVisible(true);
-
+                new RobotGUI(new RobotManager()).setVisible(true);
             }
         });
     }
@@ -314,10 +434,280 @@ public class RobotGUI extends javax.swing.JFrame {
     private javax.swing.JButton ConnectButton;
     private javax.swing.JTextField IPField;
     private javax.swing.JPanel RadarPanel;
-    private javax.swing.JButton ResetScanButton;
     private javax.swing.JButton StopServerButton;
     private javax.swing.JTextArea TextArea1;
+    private javax.swing.JCheckBox autoDrawCheckBox;
+    private javax.swing.JButton clearRadarButton;
+    private javax.swing.JLabel connectedLabel;
+    private javax.swing.JLabel dotSizeLabel;
+    private javax.swing.JTextField dotSizeTextField;
+    private javax.swing.JButton drawDot;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JTextField radarRotateRateTextField;
+    private javax.swing.JTextField xTextField;
+    private javax.swing.JTextField yTextField;
     // End of variables declaration                   
+
+    private class Radar extends Thread
+    {
+        private Graphics graphic;
+        private int width;
+        private int height;
+        private Point middle;
+
+        //condition
+        public boolean autoDraw = true;
+        public boolean drawCenterCircle = true;
+        public boolean drawRadar = true;
+        public boolean drawDot = true;
+        public boolean clearEachDraw = true;
+        public int refreshRate = 24;
+        public int spinRate = 20;
+        public int middleCircleW = 20;
+        public int middleCircleH = 20;
+        public int dotSize = 10;
+
+        //for drawing line
+        private Point endPoint = new Point(0, 0);
+        private boolean moveRight = true;
+        private boolean moveLeft = false;
+        private boolean moveUp = false;
+        private boolean moveDown = false;
+        
+        //for drawing dot
+        public Dot dotArray[];
+
+
+        public Radar(JPanel panel)
+        {
+            this.graphic = panel.getGraphics();
+            width = panel.getWidth();
+            height = panel.getHeight();
+            middle = new Point(width / 2, height / 2);
+        }
+
+        @Override
+        public void run()
+        {
+            while(!this.isInterrupted())
+            {
+                if(autoDraw)
+                {
+                    try 
+                    {
+                        if(clearEachDraw)
+                            clearAll();
+
+                        if(drawRadar)
+                            drawRadar();
+
+                        if(drawCenterCircle)
+                            drawCenterCircle();
+
+                        if(drawDot)
+                            drawDots();
+
+                        Thread.sleep(refreshRate);
+
+                    } 
+                    catch (InterruptedException ex) 
+                    {
+                        Logger.getLogger(Radar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+
+
+        public void drawDot(int x, int y)
+        {
+            drawCircle(x, y, dotSize, dotSize);
+            fillCircle(x, y, dotSize, dotSize, Color.BLACK);
+        }
+        
+        public void drawDot(Dot dot)
+        {
+            drawDot((int)dot.getx(),(int)dot.gety());
+        }
+
+        public void drawDots()
+        {
+            if(dotArray == null)
+                return;
+            if(dotArray.length == 0)
+                return;
+            
+            for(int count = 0; count < dotArray.length; count++)
+            {
+                drawDot(dotArray[count]);
+            }
+        }
+
+        public void drawCenterCircle()
+        {
+            drawCircle(middle, middleCircleW, middleCircleH);
+            fillCircle(middle, middleCircleW, middleCircleH, Color.RED);
+
+            drawLine(this.width/2, 0, this.width/2, this.height);
+            drawLine(0, this.height/2, this.width, this.height/2);
+        }
+
+        public void drawRadar()
+        {
+
+
+            drawLine(middle, endPoint, Color.BLUE);
+
+
+
+            if(moveRight)
+            {
+                endPoint.x += spinRate;
+                if(endPoint.x >= this.width - 1)
+                {
+                    moveRight = false;
+                    moveDown = true;
+                }
+            }
+
+            if(moveDown)
+            {
+                endPoint.y += spinRate;
+                if(endPoint.y >= this.height - 1)
+                {
+                    moveDown = false;
+                    moveLeft = true;
+                }
+            }
+
+            if(moveLeft)
+            {
+                endPoint.x -= spinRate;
+                if(endPoint.x <= 0)
+                {
+                    moveLeft = false;
+                    moveUp = true;
+                }
+            }
+
+            if(moveUp)
+            {
+                endPoint.y -= spinRate;
+                if(endPoint.y <= 0)
+                {
+                    moveUp = false;
+                    moveRight = true;
+                }
+            }
+        }
+
+
+
+        private void drawLine(Point point1, Point point2, Color color)
+        {
+            graphic.setColor(color);
+            drawLine(point1.x, point1.y, point2.x, point2.y);
+            graphic.setColor(Color.BLACK);
+        }
+        public void drawLine(int x1, int y1, int x2, int y2, Color color)
+        {
+            graphic.setColor(color);
+            graphic.drawLine(x1, y1, x2, y2);
+            graphic.setColor(Color.BLACK);
+        }
+
+        private void drawLine(Point point1, Point point2)
+        {
+            drawLine(point1.x, point1.y, point2.x, point2.y);
+        }
+        public void drawLine(int x1, int y1, int x2, int y2)
+        {
+            graphic.drawLine(x1, y1, x2, y2);
+        }
+
+        private void fillCircle(Point point, int width, int height, Color color)
+        {
+            fillCircle(point.x, point.y, width, height, color);
+        }
+
+        public void fillCircle(int x, int y, int width, int height, Color color)
+        {
+            if(x > this.width || y > this.height)
+                return;
+
+            //make sure it draw correct
+            x = x - (width / 2);
+            y = y + (height / 2);
+
+            //invert Y
+            y = this.height - y;
+
+            graphic.setColor(color);
+            graphic.fillOval(x, y, width, height);
+            graphic.setColor(Color.BLACK);
+        }
+
+        public void drawCircle(int x, int y, int width, int height, Color color)
+        {
+            if(x > this.width || y > this.height)
+                return;
+
+            //make sure it draw correct
+            x = x - (width / 2);
+            y = y + (height / 2);
+
+            //invert Y
+            y = this.height - y;
+            graphic.setColor(color);
+            graphic.drawOval(x, y, width, height);
+            graphic.setColor(Color.BLACK);
+        }
+
+        public void drawCircle(int x, int y, int width, int height)
+        {
+            if(x > this.width || y > this.height)
+                return;
+
+            //make sure it draw correct
+            x = x - (width / 2);
+            y = y + (height / 2);
+
+            //invert Y
+            y = this.height - y;
+
+            graphic.drawOval(x, y, width, height);
+        }
+
+        private void drawCircle(Point point, int width, int height)
+        {
+            drawCircle(point.x, point.y, width, height);
+        }
+
+        public void clearAll()
+        {
+            graphic.clearRect(0, 0, width, height);
+
+            drawLine(0, 0, this.width, 0, Color.RED);
+            drawLine(0, 0, 0, this.height, Color.RED);
+            drawLine(this.width - 1, this.height, this.width - 1, 0, Color.RED);
+            drawLine(this.width - 1, this.height - 1, 0, this.height - 1, Color.RED);
+        }
+
+
+    }
+
+    private class Point
+    {
+        public int x;
+        public int y;
+        public Point(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }

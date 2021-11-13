@@ -94,7 +94,7 @@ class dataInterpreter {
 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
-                temp.put((i - angle + 360) % 360, dotList.get(i)); 
+                temp.put((i - angle + 360000) % 360, dotList.get(i)); 
             }
         }
         dotList = temp; 

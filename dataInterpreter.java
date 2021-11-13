@@ -12,7 +12,7 @@ class dataInterpreter {
     // private final double robotMoveSpeed = 1; // debugging speeds 
     // private final double robotTurnSpeed = 1; 
 
-    private final double maxScanDist = 400; // in mm
+    private final int maxScanDist = 400; // in mm
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR

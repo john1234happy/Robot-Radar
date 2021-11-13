@@ -13,8 +13,6 @@ class dataInterpreter {
     // private final double robotTurnSpeed = 1; 
 
     private final double maxScanDist = 400; // in mm
-    private final double panelHeight = 500; // in px
-    private final double panelWidth = 500;  // in px
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
@@ -121,8 +119,8 @@ class dataInterpreter {
         return array; 
     }
 
-    public Dot[] getListScaled() {
-        // returns array of dots relative to the robot in px (scaled to panel with 500p height and width))
+    public Dot[] getListScaled(int panelWidth, int panelHeight) {
+        // returns array of dots relative to the robot in px (scaled to panel)
         Dot[] array = new Dot[dotList.size()];
         int index = 0;
 

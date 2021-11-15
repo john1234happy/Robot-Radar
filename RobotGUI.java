@@ -20,7 +20,7 @@ public class RobotGUI extends javax.swing.JFrame
        this.radar = new Radar(RadarPanel);
        this.radar.start();
        
-      
+        
     }
 
     /**
@@ -390,6 +390,7 @@ public class RobotGUI extends javax.swing.JFrame
     private void StopServerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // TODO add your handling code here:
         // TODO add your handling code here:
+        rm.trySendCommand("stopServer");
         rm.tryDisconnect();
         connectedLabel.setText("Connected: NO");
         rm = new RobotManager();
@@ -438,8 +439,7 @@ public class RobotGUI extends javax.swing.JFrame
     private void clearRadarButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // TODO add your handling code here:
         rm.clearDotList();
-        autoDrawCheckBox.setSelected(false);
-        radar.autoDraw = false;
+        radar.dotArray = null;
         radar.clearAll();
         radar.drawCenterCircle();
     }                                                
@@ -466,7 +466,7 @@ public class RobotGUI extends javax.swing.JFrame
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {                                      
         // TODO add your handling code here:
-        rm.trySendCommand(String.format("turnHead(%s)", jSlider1.getValue()));
+        rm.trySendCommand(String.format("turnScan(%s)", jSlider1.getValue()));
         //System.out.println(jSlider1.getValue());
     }                                     
 
@@ -491,7 +491,7 @@ public class RobotGUI extends javax.swing.JFrame
 
     private void turnHeadTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                  
         // TODO add your handling code here:
-        rm.trySendCommand(String.format("turnHead(%s)", turnHeadTextField.getText().trim()));
+        rm.trySendCommand(String.format("turnScan(%s)", turnHeadTextField.getText().trim()));
         jSlider1.setValue(Integer.parseInt(turnHeadTextField.getText().trim()));
     }                                                 
 
@@ -507,12 +507,12 @@ public class RobotGUI extends javax.swing.JFrame
 
     private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
-        rm.trySendCommand("moveRight");
+        rm.trySendCommand("rotateRight");
     }                                           
 
     private void leftButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         // TODO add your handling code here:
-        rm.trySendCommand("moveLeft");
+        rm.trySendCommand("rotateLeft");
     }                                          
 
     private void haltButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           

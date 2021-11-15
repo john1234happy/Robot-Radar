@@ -2,14 +2,9 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-
 class dataInterpreter {
 
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
-
-    Dot[] scaledList;
-
-    private int panelHeight; private int panelWidth; 
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
     private final double robotMoveSpeed = 1; // mm per second 
@@ -66,7 +61,6 @@ class dataInterpreter {
             matcher.find();
             updateListAngle((int) (-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
         }
-        updateScaledList();
     }
 
     private void updateListMovement(double moved) { 
@@ -95,7 +89,6 @@ class dataInterpreter {
             }
         }      
         dotList = temp; 
-        updateScaledList();
     }
 
     private void updateListAngle(int turned) { 
@@ -119,7 +112,6 @@ class dataInterpreter {
             }
         }
         dotList = temp; 
-        updateScaledList();
     }
 
     public void printDots() { // prints list with angle in deg, x in mm, and y in mm 
@@ -130,23 +122,7 @@ class dataInterpreter {
         }
     }
 
-    private void updateScaledList() {
-        // returns array of dots relative to the robot in px (scaled to panel)
-        scaledList = new Dot[dotList.size()];
-        int index = 0;
-
-        for (Dot d : dotList.values()) {
-            double x = d.getx(); double y = d.gety(); 
-            x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist
-            x *= panelWidth / 2; y *= panelHeight / 2; // scale to size of panel 
-            x += panelWidth / 2; y += panelHeight / 2;  // move to middle of panel 
-
-            scaledList[index] = new Dot(x, y);
-            index++; 
-        } 
-    }
-
-    public Dot[] getList() {
+    public Dot[] getDots() {
         // returns array of dots relative to the robot in mm
         Dot[] array = new Dot[dotList.size()];
         int index = 0;
@@ -159,8 +135,19 @@ class dataInterpreter {
     }
 
     public Dot[] getScaledList(int panelHeight, int panelWidth) {
-        this.panelHeight = panelHeight; 
-        this.panelWidth = panelHeight; 
+        // returns an array of dots, scaled to panel in pixels
+        Dot[] scaledList = new Dot[dotList.size()];
+        int index = 0;
+
+        for (Dot d : dotList.values()) {
+            double x = d.getx(); double y = d.gety(); 
+            x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist
+            x *= panelWidth / 2; y *= panelHeight / 2; // scale to size of panel 
+            x += panelWidth / 2; y += panelHeight / 2;  // move to middle of panel 
+
+            scaledList[index] = new Dot(x, y);
+            index++; 
+        } 
 
         return scaledList; 
     }

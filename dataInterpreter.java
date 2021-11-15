@@ -7,10 +7,10 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 1; // mm per second 
-    private final double robotTurnSpeed = 1; // degrees per second 
+    private final double robotMoveSpeed = 117; // mm per second 
+    private final double robotTurnSpeed = 120; // degrees per second 
 
-    private final int maxScanDist = 400; // in mm
+    private final int maxScanDist = 1200; // in mm
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR

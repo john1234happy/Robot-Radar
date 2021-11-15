@@ -235,7 +235,9 @@ public class RobotManager extends Thread
             RDI.parseJSON(jsonPackage);
 
             //send that json package to GUI
-            GUI.updateInterfaceInfo(RDI.getList());
+            GUI.updateInterfaceInfo(RDI.getScaledList(500, 500));
+
+            System.out.println(RDI.getScaledList(500, 500));
         }
 
         return jsonPackage;
@@ -280,15 +282,15 @@ public class RobotManager extends Thread
                 System.out.println("Timer stop at: " + timerSecond);
 
                 //interpreting command to jsonpackage
-                jsonPackage = CI.InterpretingCommand(CI.stageCommand);
+                jsonPackage = CI.InterpretingCommand(CI.stageCommand, timerSecond);
 
                 //send jsonPackge to Data Interpreter
                 RDI.parseJSON(jsonPackage);
 
                 //send the list to GUI
-                GUI.updateInterfaceInfo(RDI.getList());
+                GUI.updateInterfaceInfo(RDI.getScaledList(500, 500));
 
-
+                client.SendToServer(CI.InterpretingCommand("halt"));
             }
             else
             {
@@ -305,7 +307,14 @@ public class RobotManager extends Thread
                 client.SendToServer(jsonPackage);
             }
         }
+        else
+        {
+            //interpreting command to jsonpackage
+            jsonPackage = CI.InterpretingCommand(command);
 
+            //send jsonpackage to server
+            client.SendToServer(jsonPackage);
+        }
         
     }
 
@@ -340,6 +349,11 @@ public class RobotManager extends Thread
         trySendCommand(jsonPackage);
     }
 
+    public void clearDotList()
+    {
+        RDI.clearDotList();
+    }
+
     
     //---------------------------------------------------------------------------------------------
 
@@ -364,7 +378,7 @@ public class RobotManager extends Thread
          */
         void SendToServer(String data)
         {
-            
+            System.out.println("send data: " + data);
             //send msg to server
             outToServer.print(data + '\n');
             outToServer.flush();

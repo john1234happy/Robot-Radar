@@ -11,8 +11,8 @@ class dataInterpreter {
 
     private int panelHeight; private int panelWidth; 
 
-    private final double robotMoveSpeed = 100; // mm per second 
-    private final double robotTurnSpeed = 180; // degrees per second 
+    private final double robotMoveSpeed = 1; // mm per second 
+    private final double robotTurnSpeed = 1; // degrees per second 
 
     private final int maxScanDist = 400; // in mm
 
@@ -103,13 +103,18 @@ class dataInterpreter {
 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
+                Dot d = dotList.get(i);
+
                 int newAngle = i - angle; 
 
                 while (newAngle < 0) 
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                temp.put(newAngle, dotList.get(i)); 
+                double newx = d.gety() * Math.cos(Math.toRadians(angle)) + d.getx() * Math.sin(Math.toRadians(angle));
+                double newy = d.getx() * Math.cos(Math.toRadians(angle)) - d.gety() * Math.sin(Math.toRadians(angle));
+
+                temp.put(newAngle, new Dot(newx, newy)); 
             }
         }
         dotList = temp; 

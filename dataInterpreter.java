@@ -11,6 +11,7 @@ class dataInterpreter {
 
     private int panelHeight; private int panelWidth; 
 
+    // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
     private final double robotMoveSpeed = 1; // mm per second 
     private final double robotTurnSpeed = 1; // degrees per second 
 
@@ -107,11 +108,11 @@ class dataInterpreter {
 
                 int newAngle = i - angle; 
 
-                while (newAngle < 0) 
+                while (newAngle < 0) // negative angle -> positive
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                double newx = d.gety() * Math.cos(Math.toRadians(angle)) + d.getx() * Math.sin(Math.toRadians(angle));
+                double newx = d.gety() * Math.cos(Math.toRadians(angle)) + d.getx() * Math.sin(Math.toRadians(angle)); // get new coords for dot
                 double newy = d.getx() * Math.cos(Math.toRadians(angle)) - d.gety() * Math.sin(Math.toRadians(angle));
 
                 temp.put(newAngle, new Dot(newx, newy)); 

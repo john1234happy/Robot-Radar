@@ -4,13 +4,15 @@ import java.util.regex.Matcher;
 
 
 class dataInterpreter {
+
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
-    private final double robotMoveSpeed = 1166.66666667; // mm per second 
-    private final double robotTurnSpeed = 180; // degrees per second 
+    Dot[] scaledList;
 
-    // private final double robotMoveSpeed = 1; // debugging speeds 
-    // private final double robotTurnSpeed = 1; 
+    private int panelHeight; private int panelWidth; 
+
+    private final double robotMoveSpeed = 100; // mm per second 
+    private final double robotTurnSpeed = 180; // degrees per second 
 
     private final int maxScanDist = 400; // in mm
 
@@ -63,6 +65,7 @@ class dataInterpreter {
             matcher.find();
             updateListAngle((int) (-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
         }
+        updateScaledList();
     }
 
     private void updateListMovement(double moved) { 
@@ -76,16 +79,22 @@ class dataInterpreter {
                 double x = dotList.get(i).getx(); // extract info from dot
                 double y = dotList.get(i).gety() - moved; 
 
-                int newAngle = (int) Math.round((Math.toDegrees(Math.atan2(x, y)) + 360000) % 360); // cartesian coords -> polar
+                int newAngle = (int) Math.round(Math.toDegrees(Math.atan2(x, y)));  // cartesian coords -> polar
+
+                while (newAngle < 0) 
+                    newAngle += 360; 
+                newAngle %= 360; 
+
                 double newDist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); 
 
                 double newx = newDist * Math.sin(Math.toRadians(newAngle)); // polar coords -> cartesian 
-                double newy = newDist * Math.cos(Math.toRadians(newAngle)); // transform
+                double newy = newDist * Math.cos(Math.toRadians(newAngle));
 
                 temp.put(newAngle, new Dot(newx, newy)); 
             }
         }      
         dotList = temp; 
+        updateScaledList();
     }
 
     private void updateListAngle(int angle) { 
@@ -94,18 +103,41 @@ class dataInterpreter {
 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
-                temp.put((i - angle + 360000) % 360, dotList.get(i)); 
+                int newAngle = i - angle; 
+
+                while (newAngle < 0) 
+                    newAngle += 360; 
+                newAngle %= 360; 
+
+                temp.put(newAngle, dotList.get(i)); 
             }
         }
         dotList = temp; 
+        updateScaledList();
     }
 
-    public void printList() { // prints list with angle in deg, x in mm, and y in mm 
+    public void printDots() { // prints list with angle in deg, x in mm, and y in mm 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {
                 System.out.println("Angle " + i + " -- x: " + dotList.get(i).getx() + ", y: " + dotList.get(i).gety());
             }
         }
+    }
+
+    private void updateScaledList() {
+        // returns array of dots relative to the robot in px (scaled to panel)
+        scaledList = new Dot[dotList.size()];
+        int index = 0;
+
+        for (Dot d : dotList.values()) {
+            double x = d.getx(); double y = d.gety(); 
+            x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist
+            x *= panelWidth / 2; y *= panelHeight / 2; // scale to size of panel 
+            x += panelWidth / 2; y += panelHeight / 2;  // move to middle of panel 
+
+            scaledList[index] = new Dot(x, y);
+            index++; 
+        } 
     }
 
     public Dot[] getList() {
@@ -120,21 +152,11 @@ class dataInterpreter {
         return array; 
     }
 
-    public Dot[] getListScaled(int panelWidth, int panelHeight) {
-        // returns array of dots relative to the robot in px (scaled to panel)
-        Dot[] array = new Dot[dotList.size()];
-        int index = 0;
+    public Dot[] getScaledList(int panelHeight, int panelWidth) {
+        this.panelHeight = panelHeight; 
+        this.panelWidth = panelHeight; 
 
-        for (Dot d : dotList.values()) {
-            double x = d.getx(); double y = d.gety(); 
-            x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist
-            x *= panelWidth / 2; y *= panelHeight / 2; // scale to size of panel 
-            x += panelWidth / 2; y += panelHeight / 2;  // move to middle of panel 
-
-            array[index] = new Dot(x, y);
-            index++; 
-        }
-        return array; 
+        return scaledList; 
     }
 }
 

@@ -37,13 +37,13 @@ class dataInterpreter {
 
                 angle -= 90; // 90 degrees is straight ahead 
                 while (angle < 360) 
-                    angle += 360; // if negative -> positive 
+                    angle += 360; // negative angle -> positive
                 angle %= 360; 
 
                 double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
                 double y = dist * Math.cos(Math.toRadians(angle)); // transform
 
-                dotList.put(angle, new Dot(x, y));
+                dotList.put(angle, new Dot(x, y)); // add dot to list
             } 
         }
 
@@ -82,7 +82,7 @@ class dataInterpreter {
 
                 int newAngle = (int) Math.round(Math.toDegrees(Math.atan2(x, y)));  // cartesian coords -> polar
 
-                while (newAngle < 0) 
+                while (newAngle < 0) //negative angle -> positive
                     newAngle += 360; 
                 newAngle %= 360; 
 
@@ -98,22 +98,22 @@ class dataInterpreter {
         updateScaledList();
     }
 
-    private void updateListAngle(int angle) { 
+    private void updateListAngle(int turned) { 
         // update list with angle turned in degrees
         HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {
-            if (dotList.get(i) != null) {
-                Dot d = dotList.get(i);
+            Dot d = dotList.get(i);
+            if (d != null) {
 
-                int newAngle = i - angle; 
+                int newAngle = i - turned; 
 
                 while (newAngle < 0) // negative angle -> positive
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                double newx = d.gety() * Math.cos(Math.toRadians(angle)) + d.getx() * Math.sin(Math.toRadians(angle)); // get new coords for dot
-                double newy = d.getx() * Math.cos(Math.toRadians(angle)) - d.gety() * Math.sin(Math.toRadians(angle));
+                double newx = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); // get new coords for dot
+                double newy = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned));
 
                 temp.put(newAngle, new Dot(newx, newy)); 
             }

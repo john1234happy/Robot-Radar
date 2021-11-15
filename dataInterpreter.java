@@ -7,8 +7,8 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 1; // mm per second 
-    private final double robotTurnSpeed = 1; // degrees per second 
+    private final double robotMoveSpeed = 100; // mm per second 
+    private final double robotTurnSpeed = 180; // degrees per second 
 
     private final int maxScanDist = 400; // in mm
 
@@ -105,8 +105,8 @@ class dataInterpreter {
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                double newx = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); // get new coords for dot
-                double newy = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned));
+                double newx = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned));
+                double newy = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); // get new coords for dot
 
                 temp.put(newAngle, new Dot(newx, newy)); 
             }

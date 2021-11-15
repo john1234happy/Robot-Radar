@@ -38,7 +38,25 @@ public class CommandInterpreter
                 break;
         }
 
-        return InterpretingCommand(command);
+        return command;
+    }
+
+
+    public String InterpretingCommand(String command, double time)
+    {
+        String jsonPackage;
+
+        if(command.indexOf("(") > 0)
+        {
+            String argument = command.substring(command.indexOf("(") + 1, command.indexOf(")"));
+            command = command.substring(0, command.indexOf("("));
+            jsonPackage = String.format("{\"command\":\"%s\",\"angle\":%s,\"second\":%s}", command, argument, time);
+        }
+        else
+            jsonPackage = String.format("{\"command\":\"%s\",\"second\":%s}", command, time);
+
+        this.stageCommand = command;
+        return jsonPackage;
     }
 
     /**

@@ -114,6 +114,11 @@ class dataInterpreter {
         dotList = temp; 
     }
 
+    public void clearDotList() {
+        // clears dot list
+        dotList.clear();
+    }
+
     public void printDots() { // prints list with angle in deg, x in mm, and y in mm 
         for (int i = 0; i < 360; i++) {
             if (dotList.get(i) != null) {

@@ -7,8 +7,8 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 100; // mm per second 
-    private final double robotTurnSpeed = 180; // degrees per second 
+    private final double robotMoveSpeed = 1; // mm per second 
+    private final double robotTurnSpeed = 1; // degrees per second 
 
     private final int maxScanDist = 400; // in mm
 
@@ -54,12 +54,12 @@ class dataInterpreter {
 
         else if (s.contains("rotateRight")) {
             matcher.find();
-            updateListAngle((int) (robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
+            updateListAngle((int) Math.round(robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
 
         else if (s.contains("rotateLeft")) {
             matcher.find();
-            updateListAngle((int) (-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5));
+            updateListAngle((int) Math.round(-robotTurnSpeed * Double.parseDouble(s.substring(matcher.start(), matcher.end()))));
         }
     }
 
@@ -105,8 +105,8 @@ class dataInterpreter {
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                double newx = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned));
-                double newy = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); // get new coords for dot
+                double newx = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned)); // get new coords for dot
+                double newy = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); 
 
                 temp.put(newAngle, new Dot(newx, newy)); 
             }
@@ -137,8 +137,8 @@ class dataInterpreter {
     public Dot[] getScaledList(int panelHeight, int panelWidth) {
         // returns an array of dots, scaled to panel in pixels
         Dot[] scaledList = new Dot[dotList.size()];
-        int index = 0;
 
+        int index = 0;
         for (Dot d : dotList.values()) {
             double x = d.getx(); double y = d.gety(); 
             x /= maxScanDist; y /= maxScanDist; // get a double between 0 and 1, 1 being the max scan dist

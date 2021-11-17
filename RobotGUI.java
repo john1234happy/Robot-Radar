@@ -664,6 +664,10 @@ public class RobotGUI extends javax.swing.JFrame
                     {
                         Logger.getLogger(Radar.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
                 }
             }
         }

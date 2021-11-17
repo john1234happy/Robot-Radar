@@ -7,8 +7,8 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 180; // mm per second 
-    private final double robotTurnSpeed = 120; // degrees per second 
+    private final double robotMoveSpeed = 257; // mm per second 
+    private final double robotTurnSpeed = 130; // degrees per second 
 
     private final int maxScanDist = 1200; // in mm
 
@@ -30,8 +30,8 @@ class dataInterpreter {
                 matcher.find();
                 Integer angle = Integer.parseInt(s.substring(matcher.start(), matcher.end())); 
 
-                angle -= 90; // 90 degrees is straight ahead
-                angle -= 2 * angle; // flip it over y axis because I probably messed up somewhere else :)
+                angle -= 90; // 90 degrees is straight ahead, also flip it over y axis
+                angle -= 2 * angle;
                 while (angle < 360) 
                     angle += 360; // negative angle -> positive
                 angle %= 360; 
@@ -160,7 +160,6 @@ class dataInterpreter {
         return scaledList; 
     }
 }
-
 
 
 

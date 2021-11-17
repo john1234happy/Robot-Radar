@@ -30,7 +30,8 @@ class dataInterpreter {
                 matcher.find();
                 Integer angle = Integer.parseInt(s.substring(matcher.start(), matcher.end())); 
 
-                angle -= 2 * angle + 90; // 90 degrees is straight ahead, also flip it over y axis
+                angle -= 90; // 90 degrees is straight ahead
+                angle -= 2 * angle; // flip it over y axis because I probably messed up somewhere else :)
                 while (angle < 360) 
                     angle += 360; // negative angle -> positive
                 angle %= 360; 

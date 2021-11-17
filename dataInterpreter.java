@@ -28,7 +28,7 @@ class dataInterpreter {
             if (dist <= maxScanDist) {
 
                 matcher.find();
-                Integer angle = (int) Math.round(Double.parseDouble(s.substring(matcher.start(), matcher.end()))); 
+                Integer angle = Double.parseDouble(s.substring(matcher.start(), matcher.end())); 
 
                 angle -= 2 * angle + 90; // 90 degrees is straight ahead, also flip it over y axis
                 while (angle < 360) 

@@ -7,7 +7,7 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 117; // mm per second 
+    private final double robotMoveSpeed = 180; // mm per second 
     private final double robotTurnSpeed = 120; // degrees per second 
 
     private final int maxScanDist = 1200; // in mm
@@ -28,9 +28,9 @@ class dataInterpreter {
             if (dist <= maxScanDist) {
 
                 matcher.find();
-                Integer angle = (int) (Double.parseDouble(s.substring(matcher.start(), matcher.end())) + 0.5); 
+                Integer angle = (int) Math.round(Double.parseDouble(s.substring(matcher.start(), matcher.end()))); 
 
-                angle -= 90; // 90 degrees is straight ahead 
+                angle -= 2 * angle + 90; // 90 degrees is straight ahead, also flip it over y axis
                 while (angle < 360) 
                     angle += 360; // negative angle -> positive
                 angle %= 360; 
@@ -74,7 +74,7 @@ class dataInterpreter {
                 double x = dotList.get(i).getx(); // extract info from dot
                 double y = dotList.get(i).gety() - moved; 
 
-                int newAngle = (int) Math.round(Math.toDegrees(Math.atan2(x, y)));  // cartesian coords -> polar
+                double newAngle = Math.toDegrees(Math.atan2(x, y));  // cartesian coords -> polar
 
                 while (newAngle < 0) //negative angle -> positive
                     newAngle += 360; 
@@ -85,7 +85,9 @@ class dataInterpreter {
                 double newx = newDist * Math.sin(Math.toRadians(newAngle)); // polar coords -> cartesian 
                 double newy = newDist * Math.cos(Math.toRadians(newAngle));
 
-                temp.put(newAngle, new Dot(newx, newy)); 
+                int newAngleInt = (int) (Math.round(newAngle)); 
+
+                temp.put(newAngleInt, new Dot(newx, newy)); 
             }
         }      
         dotList = temp; 

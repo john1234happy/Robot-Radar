@@ -107,13 +107,13 @@ class dataInterpreter {
                 double x = turned > 0 ? // subtract point we are rotating around
                     d.getx() - robotWidth / 2 : // we are rotating right
                     d.getx() + robotWidth / 2;  // left
-                double y = d.gety() - robotHeight / 2;
+                double y = d.gety() + robotHeight / 2;
                 
                 double newx = x * Math.cos(Math.toRadians(turned)) - y * Math.sin(Math.toRadians(turned)); // get new coords for dot
                 double newy = y * Math.cos(Math.toRadians(turned)) + x * Math.sin(Math.toRadians(turned)); 
 
                 newx += turned > 0 ? robotWidth / 2 : -robotWidth / 2; // add back point 
-                newy += robotHeight / 2;
+                newy -= robotHeight / 2;
 
                 int newAngle = (int) Math.round(Math.toDegrees(Math.atan2(newx, newy))); 
 

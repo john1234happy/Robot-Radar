@@ -121,7 +121,7 @@ class dataInterpreter {
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                temp.put((int)newAngle, new Dot(newx, newy)); 
+                temp.put(newAngle, new Dot(newx, newy)); 
             }
         }
         dotList = temp; 

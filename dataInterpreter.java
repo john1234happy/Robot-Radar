@@ -7,8 +7,11 @@ class dataInterpreter {
     private HashMap<Integer, Dot> dotList = new HashMap<Integer, Dot>();
 
     // these values are for debugging, we estimate move speed at 100mm/s and turn speed at 180 deg/s
-    private final double robotMoveSpeed = 257; // mm per second 
-    private final double robotTurnSpeed = 130; // degrees per second 
+    private final double robotMoveSpeed = 257.577; // mm per second - 257.577
+    private final double robotTurnSpeed = 130; // degrees per second  - 130
+
+    private final double robotWidth = 140; // mm 
+    private final double robotHeight = 200; // mm
 
     private final int maxScanDist = 1200; // in mm
 
@@ -28,16 +31,16 @@ class dataInterpreter {
             if (dist <= maxScanDist) {
 
                 matcher.find();
-                Integer angle = Integer.parseInt(s.substring(matcher.start(), matcher.end())); 
+                int angle = Integer.parseInt(s.substring(matcher.start(), matcher.end())); 
 
-                angle -= 90; // 90 degrees is straight ahead, also flip it over y axis
-                angle -= 2 * angle;
+                angle -= 90; // 90 degrees is straight ahead
+                angle -= 2 * angle; // flip it over y axis because I probably messed up somewhere else :)
                 while (angle < 360) 
                     angle += 360; // negative angle -> positive
                 angle %= 360; 
 
                 double x = dist * Math.sin(Math.toRadians(angle)); // polar coords -> cartesian 
-                double y = dist * Math.cos(Math.toRadians(angle)); // transform
+                double y = dist * Math.cos(Math.toRadians(angle));
 
                 dotList.put(angle, new Dot(x, y)); // add dot to list
             } 
@@ -86,9 +89,7 @@ class dataInterpreter {
                 double newx = newDist * Math.sin(Math.toRadians(newAngle)); // polar coords -> cartesian 
                 double newy = newDist * Math.cos(Math.toRadians(newAngle));
 
-                int newAngleInt = (int) (Math.round(newAngle)); 
-
-                temp.put(newAngleInt, new Dot(newx, newy)); 
+                temp.put((int) (Math.round(newAngle)), new Dot(newx, newy)); 
             }
         }      
         dotList = temp; 
@@ -96,22 +97,31 @@ class dataInterpreter {
 
     private void updateListAngle(int turned) { 
         // update list with angle turned in degrees
+        // assumes turning left rotates around the left wheel, and vice versa. 
         HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {
             Dot d = dotList.get(i);
             if (d != null) {
 
-                int newAngle = i - turned; 
+                double x = turned > 0 ? // subtract point we are rotating around
+                    d.getx() - robotWidth / 2 : // we are rotating right
+                    d.getx() + robotWidth / 2;  // left
+                double y = d.gety() - robotHeight / 2;
+                
+                double newx = x * Math.cos(Math.toRadians(turned)) - y * Math.sin(Math.toRadians(turned)); // get new coords for dot
+                double newy = y * Math.cos(Math.toRadians(turned)) + x * Math.sin(Math.toRadians(turned)); 
+
+                newx += turned > 0 ? robotWidth / 2 : -robotWidth / 2; // add back point 
+                newy += robotHeight / 2;
+
+                int newAngle = (int) Math.round(Math.toDegrees(Math.atan2(newx, newy))); 
 
                 while (newAngle < 0) // negative angle -> positive
                     newAngle += 360; 
                 newAngle %= 360; 
 
-                double newx = d.getx() * Math.cos(Math.toRadians(turned)) - d.gety() * Math.sin(Math.toRadians(turned)); // get new coords for dot
-                double newy = d.gety() * Math.cos(Math.toRadians(turned)) + d.getx() * Math.sin(Math.toRadians(turned)); 
-
-                temp.put(newAngle, new Dot(newx, newy)); 
+                temp.put((int)newAngle, new Dot(newx, newy)); 
             }
         }
         dotList = temp; 
@@ -160,6 +170,7 @@ class dataInterpreter {
         return scaledList; 
     }
 }
+
 
 
 

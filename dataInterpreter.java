@@ -13,7 +13,7 @@ class dataInterpreter {
     private final double robotWidth = 140; // mm 
     private final double robotHeight = 200; // mm
 
-    private final int maxScanDist = 1200; // in mm
+    private final int maxScanDist = 1200; // mm
 
     public void parseJSON(String s) {
         // string must contain the keyword "Dot" and a number represesnting distance, then a number representing angle, OR
@@ -72,7 +72,6 @@ class dataInterpreter {
         HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {
-
             if (dotList.get(i) != null) {
 
                 double x = dotList.get(i).getx(); // extract info from dot
@@ -97,7 +96,6 @@ class dataInterpreter {
 
     private void updateListAngle(int turned) { 
         // update list with angle turned in degrees
-        // assumes turning left rotates around the left wheel, and vice versa. 
         HashMap<Integer, Dot> temp = new HashMap<Integer, Dot>();
 
         for (int i = 0; i < 360; i++) {

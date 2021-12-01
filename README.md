@@ -2,6 +2,7 @@
 This is a project for CSC 380-Software Engineering.
 <hr>
 Goal
+<hr>
 To create a robot radar that will detect objects and display them on the GUI screen as the robot moves.
 <hr>
 project detail<br>

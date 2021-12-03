@@ -53,10 +53,7 @@ while i == 1:
 		data = conn.recv(BUFFER_SIZE)
 		if not data: break	
 		print("received data:", data)
-		#print "data[data.find('moveForward'):data.find('}')-1]: ", data[data.find("moveForward"):data.find("}")-1]
-
-
-
+		
 		if data[data.find("moveForward"):data.find("}")-1] == "moveForward":
 			gopigo.fwd()
 			conn.sendall("Moving forward\n")
@@ -77,16 +74,16 @@ while i == 1:
 			gopigo.right()
 			conn.send("Turning right\n")
 
-		elif data[data.find("increaseSpeed"):data.find("}")-1]=="increaseSpeed":
+		elif data[data.find("increaseSpeed"):data.find("}")-1]=="increaseSpeed": # additional command the could be implemted on GUI
 			gopigo.increase_speed()
  			conn.send("Increase speed\n")
 
-		elif data[data.find("decreaseSpeed"):data.find("}")-1]=="decreaseSpeed":
+		elif data[data.find("decreaseSpeed"):data.find("}")-1]=="decreaseSpeed": # additional command the could be implemted on GUI 
 			gopigo.decrease_speed()
 			conn.send("Decrease speed\n")
 			conn.close()
 
-		elif data[data.find("resetSpeed"):data.find("}")-1]=="resetSpeed":
+		elif data[data.find("resetSpeed"):data.find("}")-1]=="resetSpeed": # additional command the could be implemted on GUI
 			gopigo.set_speed(100)
 			conn.send("Speed reset\n")
 
@@ -101,7 +98,6 @@ while i == 1:
 			time.sleep(.5)
 			read_distance = ds.read_range_continuous()
 			temp = str(read_distance)
-			#print ("distance: " + temp + " angle: " + str(tempAngle))
 			conn.sendall(temp1 + temp + temp2 + str(tempAngle) + temp3)
 
 		elif data[data.find("resetHead"):data.find(",")-1] == "resetHead":
@@ -119,33 +115,20 @@ while i == 1:
 				gopigo.servo(t)
 				read_distance = ds.read_range_continuous()
 				temp = str(read_distance)
-				#print ("distance: " + temp + " angle: " + str(t))
 				conn.sendall(temp1 + temp + temp2 + str(t) + temp3)
-				#dotlist.append(temp)
-				#dotlist.append(":")
-				#print("distance Sensor Reading: {} mm: ".format(read_distance))
 				t = t+2
 			while t >= 6 :
 				gopigo.servo(t)
 				read_distance = ds.read_range_continuous()
 				temp = str(read_distance)
-				#print ("distance: " + temp + " angle: " + str(t))
 				conn.sendall(temp1 + temp + temp2 + str(t) + temp3)
-				#dotlist.append(temp)
-				#dotlist.append(":")
-				#print("distance Sensor Reading: {} mm: ".format(read_distance)
 				t = t-2
 			temp = ''.join(dotlist)
-			#print(temp)
 			gopigo.servo(90)
 
 		elif data[data.find("stopServer"):data.find("}")-1] == "stopServer":
-			#print i
 			i = 0
 			conn.send("stopping server\n")
-			#conn.close()
-			#print i
 		else:
-			#print("Invalid command")
 			conn.send("Invalid command\n")
 	conn.close()

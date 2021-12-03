@@ -535,7 +535,7 @@ public class RobotGUI extends javax.swing.JFrame
         {
             int port = Integer.parseInt(portTextField.getText());
             String url = IPField.getText();
-            openWebpage(new URL("https://" + url + ":" + port));
+            openWebpage(new URL("http://" + url + ":" + port));
             
         }
         catch(Exception ex)

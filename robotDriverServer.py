@@ -25,7 +25,7 @@ ds = DistanceSensor()
 ds.start_continuous()
 i = 1
 
-cmd = '/home/pi/test/Robot-Radar/ustream &'
+cmd = '/home/pi/test/Robot-Radar/ustreamer.sh &'
 os.system(cmd)
 
 print(TCP_IP + "\n")

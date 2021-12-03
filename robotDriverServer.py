@@ -37,9 +37,9 @@ print("Server Started")
 
 
 while i == 1:
-	gopigo.servo(90)
-	gopigo.set_left_speed(72)
-	gopigo.set_right_speed(150)
+	gopigo.servo(90) #robot head start angle
+	gopigo.set_left_speed(72) # robot wheel ajectment left
+	gopigo.set_right_speed(150) # robot wheel ajectment right
 
 	#Wait for incomming connections
 	s.listen(1)
@@ -124,7 +124,7 @@ while i == 1:
 				conn.sendall(temp1 + temp + temp2 + str(t) + temp3)
 				t = t-2
 			temp = ''.join(dotlist)
-			gopigo.servo(90)
+			gopigo.servo(90) # after scan reset angle
 
 		elif data[data.find("stopServer"):data.find("}")-1] == "stopServer":
 			i = 0
